@@ -32,7 +32,7 @@ class FreqSet:
     
 
 
-      ----------FPV VTX CHANNEL INTERFERENCE CHECKER-----------
+----------------FPV VTX CHANNEL INTERFERENCE CHECKER----------------------
                           (IMD Analyzer)
 
     
@@ -293,19 +293,23 @@ class FreqSet:
       
       
     if bad_match + bad_close + close + near == 0:
-      print("\n\n\n\n 			  --ANALYSIS--\n\n 		All clear. Minimal interference.\n\n\n")
+      print("\n\n\n\n 			----ANALYSIS----\n\n 		All clear. Minimal interference.\n\n\n")
 
     elif bad_match + bad_close + close == 0:
-      print("\n\n\n\n 			  --ANALYSIS--\n\n 	   	    Interference not too bad.\n 	  This is an excellent rating for 5 or 6 channels.\n\n\n")
+      print("\n\n\n\n 			----ANALYSIS----\n\n 	   	    Interference not too bad.\n")
+      if len(group) >= 5:
+        print(" 	  This is an excellent rating for 5 or 6 channels.\n\n\n")
 
     elif bad_match == 0 and bad_close == 0:
-      print("\n\n\n\n 			  --ANALYSIS--\n\n 		Troubling interference possible.\n 		Good rating for 5 and 6 channels.\n\n\n")
+      print("\n\n\n\n 			----ANALYSIS----\n\n 		Troubling interference possible.\n")
+      if len(group) >= 5:
+        print(" 		Good rating for 5 and 6 channels.\n\n\n")
     
     elif bad_match == 0 and bad_close > 0:
-      print("\n\n\n\n 			  --ANALYSIS--\n\n 		     IMD problems likley!\n 	      IMD within 10MHz of at least one channel.\n\n\n")
+      print("\n\n\n\n 			----ANALYSIS----\n\n 		     IMD problems likley!\n 	     IMD within 10MHz of at least one channel.\n\n\n")
 
     elif bad_match > 0:
-      print("\n\n\n\n 			  --ANALYSIS--\n\n 	Bad channel grouping! Debilitating interference!\n\n\n")
+      print("\n\n\n\n 			----ANALYSIS----\n\n 	Bad channel grouping! Debilitating interference!\n\n\n")
 
   
 
@@ -344,6 +348,7 @@ class FreqSet:
     #print(bad_freq)
     divide_by = 0
     closest_imd = None
+    score_alt_weighted = None
 
     for i in range(len(group)):
       for sublst in bad_freq:
@@ -359,42 +364,50 @@ class FreqSet:
             to_add = (35 - diff) ** 2
             score_total += to_add
             divide_by += 1
+            #print(x)
 
     #if divide_by != 0:
      #score = round(100 - ((float(score_total) / divide_by) / 5))
     #else:
       #score = 100
 
-    score_alt_weighted = None
+    ratio = divide_by / len(group)
+    print("Number of Problem \nIMD frequencies: ============> " + str(divide_by) + "\n\n")
+    print("Problem IMD freqs / Channels \nratio is: ===================> " + str(round(ratio, 1)) + "\n\n")
     
     if closest_imd == 0:
-    	score_alt = 0
+      score_alt = 0
     
     else:
       if divide_by != 0:
         score_alt =  100 - ((((float(score_total) /divide_by) ** .5) * 3) * .952)               
         if len(group) == 6:
-      	  score_alt_weighted = round(score_alt * 1.5242, 1)
-      	  score_alt = round(score_alt, 1)
+          score_alt = score_alt * (1 -(divide_by / 50))
+
+          score_alt_weighted = round(score_alt * 1.904762, 1)
+          score_alt = round(score_alt, 1)
         elif len(group) == 5:
-      	  score_alt_weighted = round(score_alt * 1.16686, 1) #
-      	  score_alt = round(score_alt, 1)
+          score_alt = score_alt * (1 -(divide_by / 50))
+          compressor =  ((82.3 - score_alt) / 2.63) + score_alt
+
+          score_alt_weighted = round((compressor + 17.7), 1) #round(score_alt * 1.19, 1)
+          score_alt = round(score_alt, 1)
         else:
-      	  score_alt = round(score_alt, 1)
+          score_alt = round(score_alt, 1)
       else:
         score_alt = 100
 
-    print("Video Clarity Score: =======> {score}\n".format(score=score_alt))
+    print("Video Clarity Score: ========> {score}\n".format(score=score_alt))
     if score_alt_weighted != None:
       print("""
 Weighted Video Clarity Score
 (weighted relevant to {number}
-channels): =================> {score}
-      	""".format(score=score_alt_weighted, number=len(group)))
+channels): ==================> {score}
+        """.format(score=score_alt_weighted, number=len(group)))
 
     #print("Video Clarity original style Score: {score}".format(score=score)) 
     print("\nTop Possible Score is 100\n\n\n\n")
-    print("num of sub 35's - " + str(divide_by))
+    
     return score_alt
 
 
