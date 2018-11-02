@@ -294,23 +294,32 @@ class FreqSet:
       
       
     if bad_match + bad_close + close + near == 0:
-      print("\n\n\n\n 			----ANALYSIS----\n\n 		All clear. Minimal interference.\n\n\n")
+      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 		All clear. Minimal interference.\n\n\n\n\n\n")
 
     elif bad_match + bad_close + close == 0:
-      print("\n\n\n\n 			----ANALYSIS----\n\n 	   	    Interference not too bad.\n")
+      
+      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 	   	  Interference not too bad.\n")
+      
       if len(group) >= 5:
-        print(" 	  This is an excellent rating for 5 or 6 channels.\n\n\n")
-
-    elif bad_match == 0 and bad_close == 0:
-      print("\n\n\n\n 			----ANALYSIS----\n\n 		Troubling interference possible.\n")
-      if len(group) >= 5:
-        print(" 		Good rating for 5 and 6 channels.\n\n\n")
+        print(" 	  This is an excellent rating for 5 or 6 channels.\n\n\n\n\n\n")
+      
+      else:
+        print("\n\n\n\n\n\n")
     
+    elif bad_match == 0 and bad_close == 0:
+      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 		Troubling interference possible.\n")
+      
+      if len(group) >= 5:
+        print(" 		Good rating for 5 and 6 channels.\n\n\n\n\n\n")
+      
+      else:
+        print("\n\n\n\n\n\n")
+
     elif bad_match == 0 and bad_close > 0:
-      print("\n\n\n\n 			----ANALYSIS----\n\n 		     IMD problems likley!\n 	     IMD within 10MHz of at least one channel.\n\n\n")
+      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 		     IMD problems likley!\n 	     IMD within 10MHz of at least one channel.\n\n\n\n\n\n")
 
     elif bad_match > 0:
-      print("\n\n\n\n 			----ANALYSIS----\n\n 	Bad channel grouping! Debilitating interference!\n\n\n")
+      print("\n\n\n\n\n\n\n\n\n\n\n\n 			 -------ANALYSIS-------\n\n 	  Bad channel grouping! Debilitating interference!\n\n\n\n\n\n")
 
   
 
@@ -328,10 +337,13 @@ class FreqSet:
         converter[sliced_raw[0]] = clean
     
     for chan in self.group:
+      
       if chan != None:
+        
         if len(chan) == 2:
           value = converter[chan]
           converted.append(int(value))
+        
         else:
         	converted.append(int(chan))
 
@@ -412,7 +424,7 @@ channels): ==================> {score}
         """.format(score=score_alt_weighted, number=len(group)))
 
     #print("Video Clarity original style Score: {score}".format(score=score)) 
-    print("\nTop Possible Score is 100\n\n\n\n")
+    print("\nTop Possible Score is 100\n\n\n\n\n\n\n\n")
     
     self.scores = [score_alt, score_alt_weighted]
 
