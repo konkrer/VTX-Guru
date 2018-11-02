@@ -16,6 +16,7 @@ class FreqSet:
     self.freq6 = freq6
     self.group = [self.freq1, self.freq2, self.freq3, self.freq4, self.freq5, self.freq6]
     self.output = None
+    self.scores = []
 
 
 
@@ -236,9 +237,9 @@ class FreqSet:
 
   
 
-  def check_freqz(self, freq_lst):
+  def check_freqz(self, freq_set):
   
-    group = [freq for freq in freq_lst if freq != None]
+    group = [freq for freq in freq_set if freq != None]
     freq_bad = []
   
 
@@ -256,10 +257,10 @@ class FreqSet:
 
 
 
-  def analyze_interference(self, freq_lst):
+  def analyze_interference(self, freq_set):
   
-    bad_freq = self.check_freqz(freq_lst)
-    group = [freq for freq in freq_lst if freq != None]
+    bad_freq = self.check_freqz(freq_set)
+    group = [freq for freq in freq_set if freq != None]
     bad_match = 0
     bad_close = 0
     close = 0
@@ -313,7 +314,7 @@ class FreqSet:
 
   
 
-  def convert_freq_abbreviations(self, freq_lst):
+  def convert_freq_abbreviations(self):
     
     converter = {}
     converted = []
@@ -325,7 +326,8 @@ class FreqSet:
         dirty = sliced_raw[1]
         clean = dirty.strip('\n')
         converter[sliced_raw[0]] = clean
-    for chan in freq_lst:
+    
+    for chan in self.group:
       if chan != None:
         if len(chan) == 2:
           value = converter[chan]
@@ -340,10 +342,10 @@ class FreqSet:
 
 
 
-  def score(self, freq_lst):
+  def score(self, freq_set):
     
-    bad_freq = self.check_freqz(freq_lst)
-    group = [freq for freq in freq_lst if freq != None]
+    bad_freq = self.check_freqz(freq_set)
+    group = [freq for freq in freq_set if freq != None]
     score_total = 0
     #print(bad_freq)
     divide_by = 0
@@ -408,7 +410,7 @@ channels): ==================> {score}
     #print("Video Clarity original style Score: {score}".format(score=score)) 
     print("\nTop Possible Score is 100\n\n\n\n")
     
-    return score_alt
+    self.scores = [score_alt, score_alt_weighted]
 
 
 
@@ -420,11 +422,105 @@ channels): ==================> {score}
       
       output_file = input("Name of output_file?")
       with open(output_file, "a") as f:
+        f.write("%s  %s   " % (self.scores[0], self.scores[1]))
         for chan in group:
           f.write(str(chan) +" ",)
         f.write("\n")
 
+    else:
+      with open(self.output, "a") as f:
+        f.write("%s  %s   " % (self.scores[0], self.scores[1]))
+        for chan in group:
+          f.write(str(chan) +" ",)
+        f.write("\n")
+
+   
+  def investigate(self, score_limit=70, usa_only=False):
     
+    num_channels =  int(input("How many in channel group to investigate?"))
+    if num_channels > 6 or num_channels < 3:
+      return
+    self.output = input("Filename to output data?")
+
+    channels = []
+
+    with open('vtx_channel_guide_abrv.txt', 'r') as f:
+      for line in f:
+
+        sliced_raw = line.split(', ')
+        channels.append(sliced_raw[0])
+
+    good_groups = []   
+
+    for i in range(len(channels)):
+      channel_1 = channels[i]
+      channels_2 = [channel for channel in channels if channel != channel_1] 
+      #channels_2.remove(channel_1)
+      
+
+      for i in range(len(channels_2)):
+        channel_2 = channels_2[i]
+        channels_3 = [channel for channel in channels_2 if channel != channel_2]
+        #channels_3 = channels_2
+        #channels_3.remove(channel_2)
+        print(channels_2)
+        print(channels_3)
+
+        for i in range(len(channels_3)):
+          channel_3 = channels_3[i]
+          
+          if num_channels == 4:
+            channels_4 = channels_3.remove(channel_3)
+            
+            for channel_4 in channels_4:
+              if num_channels == 5:
+                channels_5 = channels_4.remove(channel_4)
+            
+                for channel_5 in channels_5:
+                  if num_channels == 6:
+                    channels_6 = channels_5.remove(channel_5)
+
+                    for channel_6 in channels_6:
+                      self.group = [channel_1, channel_2, channel_3, channel_4, channel_5, channel_6]
+                      converted = self.convert_freq_abbreviations()
+                      self.score(converted)
+                      if self.scores[1] > score_limit:
+                        sorted_group = sorted(self.group)
+                        if sorted_group not in good_groups:
+                          good_groups.append(sorted_group)
+                          self.export()
+
+          else:
+            self.group = [channel_1, channel_2, channel_3]
+            print(self.group)
+            converted = self.convert_freq_abbreviations()
+            self.score(converted)
+            if self.scores[0] > score_limit:
+              sorted_group = sorted(self.group)
+              if sorted_group not in good_groups:
+                good_groups.append(sorted_group)
+                self.export()
+          
 
 
 
+
+   
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
