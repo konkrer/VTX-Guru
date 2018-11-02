@@ -381,21 +381,25 @@ class FreqSet:
       score_alt = 0
     
     else:
+
       if divide_by != 0:
         score_alt =  100 - ((((float(score_total) /divide_by) ** .5) * 3) * .952)               
+        score_alt = score_alt * (1 -(divide_by / 50))
+        
         if len(group) == 6:
-          score_alt = score_alt * (1 -(divide_by / 50))
-
+          
           score_alt_weighted = round(score_alt * 1.904762, 1)
           score_alt = round(score_alt, 1)
+        
         elif len(group) == 5:
-          score_alt = score_alt * (1 -(divide_by / 50))
+          
           compressor =  ((82.3 - score_alt) / 2.63) + score_alt
+          score_alt_weighted = round((compressor + 17.7), 1) 
+          score_alt = round(score_alt, 1)
+        
+        else: 
+          score_alt = round(score_alt, 1)
 
-          score_alt_weighted = round((compressor + 17.7), 1) #round(score_alt * 1.19, 1)
-          score_alt = round(score_alt, 1)
-        else:
-          score_alt = round(score_alt, 1)
       else:
         score_alt = 100
 
@@ -470,25 +474,56 @@ channels): ==================> {score}
           channel_3 = channels_3[i]
           
           if num_channels == 4:
-            channels_4 = channels_3.remove(channel_3)
+            channels_4 = [channel for channel in channels_3 if channel != channel_3]
             
-            for channel_4 in channels_4:
+            for i in range(len(channels_4)):
+              channel_4 = channels_4[i]
+              
               if num_channels == 5:
-                channels_5 = channels_4.remove(channel_4)
+                channels_5 = [channel for channel in channels_4 if channel != channel_4]
             
-                for channel_5 in channels_5:
-                  if num_channels == 6:
-                    channels_6 = channels_5.remove(channel_5)
+                for i in range(len(channels_5)):
+                  channel_5 = channels_5[i]
 
-                    for channel_6 in channels_6:
+                  if num_channels == 6:
+                    channels_6 = [channel for channel in channels_5 if channel != channel_5]
+
+                    for i in range(len(channels_6)):
+                      channel_6 = channels_6[i]
+
                       self.group = [channel_1, channel_2, channel_3, channel_4, channel_5, channel_6]
                       converted = self.convert_freq_abbreviations()
+                      print(self.group)
                       self.score(converted)
                       if self.scores[1] > score_limit:
                         sorted_group = sorted(self.group)
                         if sorted_group not in good_groups:
                           good_groups.append(sorted_group)
                           self.export()
+                  
+              
+                  else:
+                    self.group = [channel_1, channel_2, channel_3, channel_4, channel_5]
+                    print(self.group)
+                    converted = self.convert_freq_abbreviations()
+                    self.score(converted)
+                    if self.scores[1] > score_limit:
+                      sorted_group = sorted(self.group)
+                      if sorted_group not in good_groups:
+                        good_groups.append(sorted_group)
+                        self.export() 
+         
+              else:
+                self.group = [channel_1, channel_2, channel_3, channel_4]
+                print(self.group)
+                converted = self.convert_freq_abbreviations()
+                self.score(converted)
+                if self.scores[0] > score_limit:
+                  sorted_group = sorted(self.group)
+                  if sorted_group not in good_groups:
+                    good_groups.append(sorted_group)
+                    self.export()
+
 
           else:
             self.group = [channel_1, channel_2, channel_3]
