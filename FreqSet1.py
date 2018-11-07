@@ -20,6 +20,11 @@ class FreqSet:
 
 
 
+
+
+
+
+
   def get_input(self):
     
     if self.freq1 != None and self.freq2 != None:
@@ -237,6 +242,11 @@ class FreqSet:
 
   
 
+
+
+
+
+
   def check_freqz(self, freq_set):
   
     group = [freq for freq in freq_set if freq != None]
@@ -254,6 +264,12 @@ class FreqSet:
 
 
     return freq_bad
+
+
+
+
+
+
 
 
 
@@ -294,34 +310,45 @@ class FreqSet:
       
       
     if bad_match + bad_close + close + near == 0:
-      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 		All clear. Minimal interference.\n\n\n\n\n\n")
+      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 		All clear. Minimal IMD interference.")
 
+    
     elif bad_match + bad_close + close == 0:
       
-      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 	   	  Interference not too bad.\n")
+      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 	   	IMD interference not too bad.\n")
       
       if len(group) >= 5:
-        print(" 	  This is an excellent rating for 5 or 6 channels.\n\n\n\n\n\n")
-      
-      else:
-        print("\n\n\n\n\n\n")
+        print(" 	This is an excellent IMD rating for 5 or 6 channels.")
     
+
     elif bad_match == 0 and bad_close == 0:
-      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 		Troubling interference possible.\n")
+      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 	      Troubling interference possible.\n")
       
       if len(group) >= 5:
-        print(" 		Good rating for 5 and 6 channels.\n\n\n\n\n\n")
+        print(" 	     Good IMD rating for 5 and 6 channels.")
       
-      else:
-        print("\n\n\n\n\n\n")
 
     elif bad_match == 0 and bad_close > 0:
-      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 		     IMD problems likley!\n 	     IMD within 10MHz of at least one channel.\n\n\n\n\n\n")
+      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 		     IMD problems likley!\n 	   IMD within 10MHz of at least one channel.")
 
+    
     elif bad_match > 0:
-      print("\n\n\n\n\n\n\n\n\n\n\n\n 			 -------ANALYSIS-------\n\n 	  Bad channel grouping! Debilitating interference!\n\n\n\n\n\n")
+      print("\n\n\n\n\n\n\n\n\n\n\n\n 			 -------ANALYSIS-------\n\n 	  Bad channel grouping! Debilitating interference!")
+    
+    printable = [x for x in self.group if x != None]
 
-  
+    print("\n")
+    print("                   ", end='')
+    for chan in printable:
+      print (chan.upper(), end='   ')
+    print("\n\n\n\n\n")
+
+
+
+
+
+
+
 
   def convert_freq_abbreviations(self):
     
@@ -354,59 +381,119 @@ class FreqSet:
 
 
 
+
+
+
+
+
   def score(self, freq_set):
     
     bad_freq = self.check_freqz(freq_set)
     group = [freq for freq in freq_set if freq != None]
     score_total = 0
-    #print(bad_freq)
     divide_by = 0
+    IMD_close_to_chan = 0
     closest_imd = None
+    closest_broadcast = None
+    score_alt = None
     score_alt_weighted = None
 
+    #print(bad_freq)
+
     for i in range(len(group)):
-      for sublst in bad_freq:
-        for x in sublst:
-          diff = abs(x - int(group[i]))
-          if diff < 35:
-            if closest_imd == None:
-              closest_imd = diff
+      
+      other_chans = [freq for freq in group if freq != group[i]]
+      
+      for chan in other_chans:
+
+        diff2 = abs(chan - int(group[i]))
+        if diff2 < 35:
+          if closest_broadcast == None:
+              closest_broadcast = diff2
+          
+          else:
+            if diff2 < closest_broadcast:
+                closest_broadcast = diff2
+
+
+    
+    for sublst in bad_freq:
+      for x in sublst:
+        worst = None
+        for chan in group:
+          diff3 = abs(x - chan)
+          if diff3 < 35:
+            IMD_close_to_chan += 1
+            if worst == None:
+              worst = diff3
             else:
-              if diff < closest_imd:
-              	closest_imd = diff
+              if diff3 < worst:
+                worst = diff3
+        
+        if worst != None:
+          if closest_imd == None:
+            closest_imd = worst
+          else:
+            if worst < closest_imd:
+              closest_imd = worst
 
-            to_add = (35 - diff) ** 2
-            score_total += to_add
-            divide_by += 1
-            #print(x)
+          to_add = (35 - worst) ** 3
+          score_total += to_add
+          divide_by += 1 
 
-    #if divide_by != 0:
-     #score = round(100 - ((float(score_total) / divide_by) / 5))
-    #else:
-      #score = 100
+           
 
-    ratio = divide_by / len(group)
+    ratio = (IMD_close_to_chan / len(group))
+
+
     print("Number of Problem \nIMD frequencies: ============> " + str(divide_by) + "\n\n")
+    print("Times problem IMD freq \nis close to VTX channel: ====> " + str(IMD_close_to_chan) + "\n\n")
     print("Problem IMD freqs / Channels \nratio is: ===================> " + str(round(ratio, 1)) + "\n\n")
+    print("Closest Problem \nIMD frequency: ==============> " + str(closest_imd) + " MHz\n\n")
+
     
     if closest_imd == 0:
       score_alt = 0
     
+    
     else:
 
-      if divide_by != 0:
-        score_alt =  100 - ((((float(score_total) /divide_by) ** .5) * 3) * .952)               
-        score_alt = score_alt * (1 -(divide_by / 50))
+      if divide_by != 0 or closest_broadcast != None:
+
+        
+        if divide_by != 0:
+          score_alt =  100 - ((((float(score_total) /divide_by) ** .33333333333) * 3) * .952)               
+          score_alt = score_alt * (1 -(IMD_close_to_chan / 30))  # to reduce proportinal to close IMD channels
+        
+        
+        if closest_broadcast != None:
+          
+          if closest_broadcast <= 19:
+            score_alt = 0
+            print("*****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast))      
+
+          elif closest_broadcast < 35:
+            print("***VTX channels close! %s MHz apart.***\n\n" % (closest_broadcast))
+          
+          broadcast_factor = (1 - (closest_broadcast / 40))
+          
+          if score_alt != None:   
+            score_alt = score_alt * broadcast_factor  # to reduce proportinal to close broadcast channels
+
+          else:
+            score_alt = 100 * broadcast_factor
+
+        
         
         if len(group) == 6:
           
-          score_alt_weighted = round(score_alt * 1.904762, 1)
+          score_alt_weighted = round(score_alt * 2.3595, 1)  # old factor 1.966
           score_alt = round(score_alt, 1)
         
         elif len(group) == 5:
           
-          compressor =  ((82.3 - score_alt) / 2.63) + score_alt
-          score_alt_weighted = round((compressor + 17.7), 1) 
+          compressor =  ((80.0053 - score_alt) / 3.175) + score_alt
+          score_alt_weighted = round((compressor + 20), 1) 
           score_alt = round(score_alt, 1)
         
         else: 
@@ -421,12 +508,17 @@ class FreqSet:
 Weighted Video Clarity Score
 (weighted relevant to {number}
 channels): ==================> {score}
-        """.format(score=score_alt_weighted, number=len(group)))
-
-    #print("Video Clarity original style Score: {score}".format(score=score)) 
+        """.format(number=len(group), score=score_alt_weighted))
+ 
     print("\nTop Possible Score is 100\n\n\n\n\n\n\n\n")
     
     self.scores = [score_alt, score_alt_weighted]
+
+
+
+
+
+
 
 
 
@@ -449,9 +541,14 @@ channels): ==================> {score}
         for chan in group:
           f.write(str(chan) +" ",)
         f.write("\n")
+ 
 
-   
-  def investigate(self, score_limit=70, usa_only=False):
+
+
+
+
+
+  def investigate(self, score_limit=65, usa_only=False):
     
     num_channels =  int(input("How many in channel group to investigate?"))
     if num_channels > 6 or num_channels < 3:
@@ -466,87 +563,178 @@ channels): ==================> {score}
         sliced_raw = line.split(', ')
         channels.append(sliced_raw[0])
 
-    good_groups = []   
+    channels.remove('f8')
+    if usa_only:
+      channels.remove('e4')
+      channels.remove('e7')
+      channels.remove('e8')
 
-    for i in range(len(channels)):
-      channel_1 = channels[i]
-      channels_2 = [channel for channel in channels if channel != channel_1] 
-      #channels_2.remove(channel_1)
-      
+    #good_groups = []
+    channel_1_used = []
+    base_case = None
+    combo_count = 0
+    
+    l = len(channels)
+    if num_channels == 6:
+      base_case = (l*(l-1)*(l-2)*(l-3)*(l-4)*(l-5)) / (6*5*4*3*2)
+    elif num_channels == 5:
+      base_case = (l*(l-1)*(l-2)*(l-3)*(l-4)) / (5*4*3*2)
+    elif num_channels == 4:
+      base_case = (l*(l-1)*(l-2)*(l-3)) / (4*3*2)
+    elif num_channels == 3:
+      base_case = (l*(l-1)*(l-2)) / (3*2)
 
-      for i in range(len(channels_2)):
-        channel_2 = channels_2[i]
-        channels_3 = [channel for channel in channels_2 if channel != channel_2]
-        #channels_3 = channels_2
-        #channels_3.remove(channel_2)
-        print(channels_2)
-        print(channels_3)
 
-        for i in range(len(channels_3)):
-          channel_3 = channels_3[i]
-          
+    #loop = True
+
+    while True:
+      for i in range(len(channels)):
+        #print(float(combo_count), base_case)
+        channel_1 = channels[i]
+        channel_1_used.append(channel_1)
+        channels_2 = [channel for channel in channels if channel not in channel_1_used] 
+        #print('channels_2')   
+        #print(channels_2)
+        channel_2_used = []
+        channels_2_redux = [channel for channel in channels_2]
+        if num_channels == 3:
+          channels_2_redux.pop()
+        elif num_channels == 4:
+          channels_2_redux.pop()
+          channels_2_redux.pop()
+        elif num_channels == 5:
+          channels_2_redux.pop()
+          channels_2_redux.pop()
+          channels_2_redux.pop()
+        elif num_channels == 6:
+          channels_2_redux.pop()
+          channels_2_redux.pop()
+          channels_2_redux.pop()
+          channels_2_redux.pop()
+        #print('channels_2_redux')
+        #print(channels_2_redux)
+        #print('channels_2')   
+        #print(channels_2)
+
+        for i in range(len(channels_2_redux)):
+          channel_2 = channels_2_redux[i]
+          channel_2_used.append(channel_2)
+          #print('channel_2_used')
+          #print(channel_2_used)
+          channels_3 = [channel for channel in channels_2 if channel not in channel_2_used]
+          #print("channels_3")
+          #print(channels_3)
+          channel_3_used = []
+          channels_3_redux = [channel for channel in channels_3]
           if num_channels == 4:
-            channels_4 = [channel for channel in channels_3 if channel != channel_3]
-            
-            for i in range(len(channels_4)):
-              channel_4 = channels_4[i]
-              
+            channels_3_redux.pop()
+          elif num_channels == 5:
+            channels_3_redux.pop()
+            channels_3_redux.pop()
+          elif num_channels == 6:
+            channels_3_redux.pop()
+            channels_3_redux.pop()
+            channels_3_redux.pop()
+          #print("channels_3_redux")
+          #print(channels_3_redux)    
+
+          for i in range(len(channels_3_redux)):
+            channel_3 = channels_3_redux[i]
+          
+            if num_channels >= 4:
+              channel_3_used.append(channel_3)
+              channels_4 = [channel for channel in channels_3 if channel not in channel_3_used]
+              channel_4_used = []
+              channels_4_redux = [channel for channel in channels_4]
               if num_channels == 5:
-                channels_5 = [channel for channel in channels_4 if channel != channel_4]
-            
-                for i in range(len(channels_5)):
-                  channel_5 = channels_5[i]
+                channels_4_redux.pop()
+              elif num_channels == 6:
+                channels_4_redux.pop()
+                channels_4_redux.pop()
 
+              for i in range(len(channels_4_redux)):
+                channel_4 = channels_4_redux[i]
+              
+                if num_channels >= 5:
+                  channel_4_used.append(channel_4)
+                  channels_5 = [channel for channel in channels_4 if channel not in channel_4_used]
+                  channel_5_used = []
+                  channels_5_redux = [channel for channel in channels_5]
                   if num_channels == 6:
-                    channels_6 = [channel for channel in channels_5 if channel != channel_5]
+                    channels_5_redux.pop()
 
-                    for i in range(len(channels_6)):
-                      channel_6 = channels_6[i]
+                  for i in range(len(channels_5_redux)):
+                    channel_5 = channels_5_redux[i]
 
-                      self.group = [channel_1, channel_2, channel_3, channel_4, channel_5, channel_6]
-                      converted = self.convert_freq_abbreviations()
-                      print(self.group)
-                      self.score(converted)
-                      if self.scores[1] > score_limit:
-                        sorted_group = sorted(self.group)
-                        if sorted_group not in good_groups:
-                          good_groups.append(sorted_group)
-                          self.export()
+                    if num_channels == 6:
+                      channel_5_used.append(channel_5)
+                      channels_6 = [channel for channel in channels_5 if channel not in channel_5_used]
+                    
+                      for i in range(len(channels_6)):
+                        channel_6 = channels_6[i]
+
+                        self.group = [channel_1, channel_2, channel_3, channel_4, channel_5, channel_6]
+                        converted = self.convert_freq_abbreviations()
+                        print(self.group)
+                        self.score(converted)
+                        if self.scores[1] != None:
+                          if self.scores[1] >= score_limit:
+                            #sorted_group = sorted(self.group)
+                            #if sorted_group not in good_groups:
+                              #good_groups.append(sorted_group)
+                            self.export()
+                        combo_count += 1
+                        if combo_count >= (int(base_case)):
+                          #loop = False
+                          return
                   
               
-                  else:
-                    self.group = [channel_1, channel_2, channel_3, channel_4, channel_5]
-                    print(self.group)
-                    converted = self.convert_freq_abbreviations()
-                    self.score(converted)
-                    if self.scores[1] > score_limit:
-                      sorted_group = sorted(self.group)
-                      if sorted_group not in good_groups:
-                        good_groups.append(sorted_group)
-                        self.export() 
+                    else:
+                      self.group = [channel_1, channel_2, channel_3, channel_4, channel_5]
+                      print(self.group)
+                      converted = self.convert_freq_abbreviations()
+                      self.score(converted)
+                      if self.scores[1] != None:
+                        if self.scores[1] >= score_limit:
+                          #sorted_group = sorted(self.group)
+                          #if sorted_group not in good_groups:
+                            #good_groups.append(sorted_group)
+                          self.export()
+                      combo_count += 1
+                      if combo_count >= (int(base_case)):
+                        #loop = False
+                        return 
          
-              else:
-                self.group = [channel_1, channel_2, channel_3, channel_4]
-                print(self.group)
-                converted = self.convert_freq_abbreviations()
-                self.score(converted)
-                if self.scores[0] > score_limit:
-                  sorted_group = sorted(self.group)
-                  if sorted_group not in good_groups:
-                    good_groups.append(sorted_group)
+                else:
+                  self.group = [channel_1, channel_2, channel_3, channel_4]
+                  print(self.group)
+                  converted = self.convert_freq_abbreviations()
+                  self.score(converted)
+                  if self.scores[0] >= score_limit:
+                    #sorted_group = sorted(self.group)
+                    #if sorted_group not in good_groups:
+                      #good_groups.append(sorted_group)
                     self.export()
+                  combo_count += 1
+                  if combo_count >= (int(base_case)):
+                    #loop = False
+                    return
 
 
-          else:
-            self.group = [channel_1, channel_2, channel_3]
-            print(self.group)
-            converted = self.convert_freq_abbreviations()
-            self.score(converted)
-            if self.scores[0] > score_limit:
-              sorted_group = sorted(self.group)
-              if sorted_group not in good_groups:
-                good_groups.append(sorted_group)
-                self.export()
+            else:
+              self.group = [channel_1, channel_2, channel_3]
+              print(self.group)
+              converted = self.convert_freq_abbreviations()
+              self.score(converted)
+              if self.scores[0] >= score_limit:
+                self.export()  
+              combo_count += 1
+              if combo_count >= (int(base_case)):
+                #loop = False
+                return
+              #print(combo_count, int(base_case))
+              #print(loop)
+            
           
 
 
@@ -555,8 +743,23 @@ channels): ==================> {score}
    
 
             
+'''      
+      for sublst in bad_freq:
+        for x in sublst:
+          diff = abs(x - int(group[i]))
+          if diff < 35:
+            if closest_imd == None:
+              closest_imd = diff
+            else:
+              if diff < closest_imd:
+                closest_imd = diff
 
+            to_add = (35 - diff) ** 3
+            score_total += to_add
+            divide_by += 1
+'''
 
+      
 
 
 
