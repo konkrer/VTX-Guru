@@ -407,13 +407,13 @@ class FreqSet:
       for chan in other_chans:
 
         diff2 = abs(chan - int(group[i]))
-        if diff2 < 35:
-          if closest_broadcast == None:
-              closest_broadcast = diff2
+        
+        if closest_broadcast == None:
+          closest_broadcast = diff2
           
-          else:
-            if diff2 < closest_broadcast:
-                closest_broadcast = diff2
+        else:
+          if diff2 < closest_broadcast:
+              closest_broadcast = diff2
 
 
     
@@ -437,7 +437,7 @@ class FreqSet:
             if worst < closest_imd:
               closest_imd = worst
 
-          to_add = (35 - worst) ** 3
+          to_add = (35 - worst) ** 2
           score_total += to_add
           divide_by += 1 
 
@@ -458,41 +458,45 @@ class FreqSet:
     
     else:
 
-      if divide_by != 0 or closest_broadcast != None:
-
-        
-        if divide_by != 0:
-          score_alt =  100 - ((((float(score_total) /divide_by) ** .33333333333) * 3) * .952)               
-          score_alt = score_alt * (1 -(IMD_close_to_chan / 30))  # to reduce proportinal to close IMD channels
+      if divide_by != 0:
+ 
+        score_alt =  100 - ((((float(score_total) /divide_by) ** .5) * 3) * .952)               
+        score_alt = score_alt * (1 -(IMD_close_to_chan / 30))  # to reduce proportinal to close IMD channels
         
         
-        if closest_broadcast != None:
+        if closest_broadcast < 40:
           
           if closest_broadcast <= 19:
-            score_alt = 0
+            #score_alt = 0
             print("*****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast))      
 
           elif closest_broadcast < 35:
             print("***VTX channels close! %s MHz apart.***\n\n" % (closest_broadcast))
-          
-          broadcast_factor = (1 - (closest_broadcast / 40))
-          
-          if score_alt != None:   
-            score_alt = score_alt * broadcast_factor  # to reduce proportinal to close broadcast channels
 
           else:
-            score_alt = 100 * broadcast_factor
+            print("Minimum VTX\nChannel seperation  =========> %sMHz\n(Channels getting close!)\n\n" % (closest_broadcast))
+          
+          broadcast_factor = (1 - ((40 - closest_broadcast) / 25))
+          
+          #if score_alt != None:   
+          score_alt = score_alt * broadcast_factor  # to reduce proportinal to close broadcast channels
 
+          #else:
+            #score_alt = 100 * broadcast_factor
+
+        else:
+          print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
         
         
+
         if len(group) == 6:
           
-          score_alt_weighted = round(score_alt * 2.3595, 1)  # old factor 1.966
+          score_alt_weighted = round(score_alt * 2.204, 1)  # old factor 1.966
           score_alt = round(score_alt, 1)
         
         elif len(group) == 5:
           
-          compressor =  ((80.0053 - score_alt) / 3.175) + score_alt
+          compressor =  ((80.0053 - score_alt) / 6.1) + score_alt
           score_alt_weighted = round((compressor + 20), 1) 
           score_alt = round(score_alt, 1)
         
@@ -501,6 +505,10 @@ class FreqSet:
 
       else:
         score_alt = 100
+
+
+
+
 
     print("Video Clarity Score: ========> {score}\n".format(score=score_alt))
     if score_alt_weighted != None:
@@ -548,11 +556,22 @@ channels): ==================> {score}
 
 
 
-  def investigate(self, score_limit=65, usa_only=False):
+  def investigate(self, score_limit=60):
     
-    num_channels =  int(input("How many in channel group to investigate?"))
+    num_channels =  int(input("How many in channel group to investigate? (3-6): "))
+    
     if num_channels > 6 or num_channels < 3:
       return
+    
+    usa_only = input("USA only? (Enter Y or N): ").lower()
+    
+    if usa_only == 'y':
+      print('\n\n*USA VTX CHANNELS ONLY CONFIRMED*\n\n')
+      usa_only = True
+    else:
+      print('\n\nWORLDWIDE VTX CHANNELS CONFIRMED\n\n')
+      usa_only = False
+
     self.output = input("Filename to output data?")
 
     channels = []
@@ -742,24 +761,6 @@ channels): ==================> {score}
 
    
 
-            
-'''      
-      for sublst in bad_freq:
-        for x in sublst:
-          diff = abs(x - int(group[i]))
-          if diff < 35:
-            if closest_imd == None:
-              closest_imd = diff
-            else:
-              if diff < closest_imd:
-                closest_imd = diff
-
-            to_add = (35 - diff) ** 3
-            score_total += to_add
-            divide_by += 1
-'''
-
-      
 
 
 
