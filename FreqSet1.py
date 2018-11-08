@@ -247,12 +247,10 @@ class FreqSet:
 
 
 
-  def check_freqz(self, freq_set):
+  def check_freqz(self, group):
   
-    group = [freq for freq in freq_set if freq != None]
     freq_bad = []
   
-
     for i in range(len(group)):
       temp = (i + 1)
       rest = group[:i] + group[temp:]
@@ -273,10 +271,9 @@ class FreqSet:
 
 
 
-  def analyze_interference(self, freq_set):
+  def analyze_interference(self, group):
   
-    bad_freq = self.check_freqz(freq_set)
-    group = [freq for freq in freq_set if freq != None]
+    bad_freq = self.check_freqz(group)
     bad_match = 0
     bad_close = 0
     close = 0
@@ -310,7 +307,7 @@ class FreqSet:
       
       
     if bad_match + bad_close + close + near == 0:
-      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 		All clear. Minimal IMD interference.")
+      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 	    All clear. Minimal IMD interference.")
 
     
     elif bad_match + bad_close + close == 0:
@@ -335,17 +332,21 @@ class FreqSet:
     elif bad_match > 0:
       print("\n\n\n\n\n\n\n\n\n\n\n\n 			 -------ANALYSIS-------\n\n 	  Bad channel grouping! Debilitating interference!")
     
-    printable = [x for x in self.group if x != None]
+    printable = self.convert_to_abbreviations()
 
     print("\n")
-    print("                   ", end='')
+    print("                 ", end='')
     for chan in printable:
       print (chan.upper(), end='   ')
+    
+    converted = self.convert_freq_abbreviations()
+
+    print("\n")
+    print("           ", end='')
+    for chan in converted:
+      print (chan, end='   ')
+
     print("\n\n\n\n\n")
-
-
-
-
 
 
 
@@ -374,8 +375,40 @@ class FreqSet:
         else:
         	converted.append(int(chan))
 
-      else:
-      	converted.append(chan)
+    return converted
+
+
+
+
+
+  def convert_to_abbreviations(self):
+    
+    converter = {}
+    converted = []
+
+    with open('vtx_channel_guide_abrv.txt', 'r') as f:
+      for line in f:
+
+        sliced_raw = line.split(', ')
+        dirty = sliced_raw[1]
+        clean = dirty.strip('\n')
+        converter[clean] = sliced_raw[0]
+    
+    for chan in self.group:
+      
+      if chan != None:
+        
+        if len(chan) == 4:
+          if chan in converter.keys():
+            value = converter[chan]
+            converted.append(value)
+
+          else:
+            converted.append(chan)
+        
+        else:
+          converted.append(chan)
+
 
     return converted
 
@@ -384,12 +417,9 @@ class FreqSet:
 
 
 
-
-
-  def score(self, freq_set):
+  def score(self, group):
     
-    bad_freq = self.check_freqz(freq_set)
-    group = [freq for freq in freq_set if freq != None]
+    bad_freq = self.check_freqz(group)
     score_total = 0
     divide_by = 0
     IMD_close_to_chan = 0
@@ -397,6 +427,7 @@ class FreqSet:
     closest_broadcast = None
     score_alt = None
     score_alt_weighted = None
+    broadcast_factor = None
 
     #print(bad_freq)
 
@@ -449,14 +480,29 @@ class FreqSet:
     print("Number of Problem \nIMD frequencies: ============> " + str(divide_by) + "\n\n")
     print("Times problem IMD freq \nis close to VTX channel: ====> " + str(IMD_close_to_chan) + "\n\n")
     print("Problem IMD freqs / Channels \nratio is: ===================> " + str(round(ratio, 1)) + "\n\n")
-    print("Closest Problem \nIMD frequency: ==============> " + str(closest_imd) + " MHz\n\n")
+    print("Minimum Problem IMD\nfrequency seperation\nto VTX channel: =============> " + str(closest_imd) + " MHz\n(*within 35Mhz)\n\n")
 
     
     if closest_imd == 0:
       score_alt = 0
+      print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
     
     
     else:
+
+      if closest_broadcast < 40:
+          
+        if closest_broadcast <= 19:
+            #score_alt = 0
+          print("*****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast))      
+
+        elif closest_broadcast < 35:
+          print("***VTX channels close! %s MHz apart.***\n\n" % (closest_broadcast))
+
+        else:
+          print("Minimum VTX\nChannel seperation  =========> %sMHz\n(Channels getting close!)\n\n" % (closest_broadcast))
+          
+        broadcast_factor = (1 - ((40 - closest_broadcast) / 25))
 
       if divide_by != 0:
  
@@ -464,25 +510,13 @@ class FreqSet:
         score_alt = score_alt * (1 -(IMD_close_to_chan / 30))  # to reduce proportinal to close IMD channels
         
         
-        if closest_broadcast < 40:
+        
           
-          if closest_broadcast <= 19:
-            #score_alt = 0
-            print("*****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast))      
-
-          elif closest_broadcast < 35:
-            print("***VTX channels close! %s MHz apart.***\n\n" % (closest_broadcast))
-
-          else:
-            print("Minimum VTX\nChannel seperation  =========> %sMHz\n(Channels getting close!)\n\n" % (closest_broadcast))
-          
-          broadcast_factor = (1 - ((40 - closest_broadcast) / 25))
-          
-          #if score_alt != None:   
+        if broadcast_factor != None:   
           score_alt = score_alt * broadcast_factor  # to reduce proportinal to close broadcast channels
 
           #else:
-            #score_alt = 100 * broadcast_factor
+           # score_alt = 100 * broadcast_factor
 
         else:
           print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
@@ -504,7 +538,14 @@ class FreqSet:
           score_alt = round(score_alt, 1)
 
       else:
-        score_alt = 100
+        if broadcast_factor == None:
+          score_alt = 100
+          print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
+        
+        else:
+          score_alt = 100 * broadcast_factor
+
+        
 
 
 
@@ -582,7 +623,6 @@ channels): ==================> {score}
         sliced_raw = line.split(', ')
         channels.append(sliced_raw[0])
 
-    channels.remove('f8')
     if usa_only:
       channels.remove('e4')
       channels.remove('e7')
