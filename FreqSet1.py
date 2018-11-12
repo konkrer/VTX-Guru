@@ -1,7 +1,14 @@
 
 
+"""
+A class made to hold a frequency group of 5GHz FPV VTX channels,
+then analyze or score for IMD interference level.
 
+Investigate method allows for investigating all possible combinations
+of channels in study group. Currently, only worldwide(40 chan) and USA only(37 chan)
+study groups available to chose. 
 
+"""
 
 
 
@@ -28,7 +35,7 @@ class FreqSet:
   def get_input(self):
     
     if self.freq1 != None and self.freq2 != None:
-      #group = [self.freq1, self.freq2, self.freq3, self.freq4, self.freq5, self.freq6]
+      
       return self.group
 
     bands = ['a', 'b', 'c', 'e', 'f', 'r']
@@ -36,9 +43,12 @@ class FreqSet:
 
     print ("""
     
+==========================================================================
+==========================================================================
 
+                          ~ VTX Guru ~
 
-----------------FPV VTX CHANNEL INTERFERENCE CHECKER----------------------
+                FPV VTX CHANNEL INTERFERENCE CHECKER
                           (IMD Analyzer)
 
     
@@ -46,11 +56,10 @@ class FreqSet:
     Enter two to six channels to check for interference.
 
 
-    Enter Band Channel abbreviation.(i.e. F1, R7) OR four digit frequency. 
-    Bands: A - B - E - F - R(C)
-    Channels: 1-8
+    Enter Band Channel abbreviation or four digit frequency.
+    -Bands: A - B - E - F - R(C)
+    -Channels: 1-8
     
-
     """)
     
 
@@ -58,20 +67,18 @@ class FreqSet:
 
     while True:
       
-      self.freq1 = input("Enter first video channel => ").lower()
+      self.freq1 = input("\nEnter first video channel ==> ").lower()
       
       try:
         
         if (self.freq1[0] in bands and self.freq1[1] in channels)\
         and len(self.freq1) == 2:
-          print ("ok\n")
+          
           break
 
-        #elif self.freq1 == 'd':
-         # break
 
         elif (int(self.freq1) <= 5945 and int(self.freq1) >= 5645):
-          print ("ok\n")
+          
           break
          
         else:
@@ -86,20 +93,18 @@ class FreqSet:
 
     while True:
       
-      self.freq2 = input("Enter second video channel => ").lower()
+      self.freq2 = input("\nEnter second video channel => ").lower()
       
       try:
         
         if (self.freq2[0] in bands and self.freq2[1] in channels)\
         and len(self.freq2) == 2:
-          print ("ok\n")
+          
           break
 
-        #elif self.freq2 == 'd':
-          #break
 
         elif (int(self.freq2) <= 5945 and int(self.freq2) >= 5645):
-          print ("ok\n")
+          
           break
          
         else:
@@ -114,13 +119,13 @@ class FreqSet:
 
     while True:
       
-      self.freq3 = input("Enter third video channel\nEnter D if done entering channels => ").lower()
+      self.freq3 = input("\nEnter third video channel\n(Enter D if done) ==========> ").lower()
       
       try:
         
         if (self.freq3[0] in bands and self.freq3[1] in channels)\
         and len(self.freq3) == 2:
-          print ("ok\n")
+          
           break
 
         elif self.freq3 == 'd':
@@ -129,7 +134,7 @@ class FreqSet:
           break
 
         elif (int(self.freq3) <= 5945 and int(self.freq3) >= 5645):
-          print ("ok\n")
+          
           break
          
         else:
@@ -147,13 +152,13 @@ class FreqSet:
       if self.freq3 == None:
       	break
 
-      self.freq4 = input("Enter fourth video channel.\nEnter D if done entering channels => ").lower()
+      self.freq4 = input("\nEnter fourth video channel\n(Enter D if done) ==========> ").lower()
       
       try:
         
         if (self.freq4[0] in bands and self.freq4[1] in channels)\
         and len(self.freq4) == 2:
-          print ("ok\n")
+          
           break
 
         elif self.freq4 == 'd':
@@ -162,7 +167,7 @@ class FreqSet:
           break
 
         elif (int(self.freq4) <= 5945 and int(self.freq4) >= 5645):
-          print ("ok\n")
+          
           break
          
         else:
@@ -180,13 +185,13 @@ class FreqSet:
       if self.freq4 == None:
       	break
 
-      self.freq5 = input("Enter fifth video channel.\nEnter D if done entering channels => ").lower()
+      self.freq5 = input("\nEnter fifth video channel\n(Enter D if done) ==========> ").lower()
       
       try:
         
         if (self.freq5[0] in bands and self.freq5[1] in channels)\
         and len(self.freq5) == 2:
-          print ("ok\n")
+          
           break
 
         elif self.freq5 == 'd':
@@ -195,7 +200,7 @@ class FreqSet:
           break
 
         elif (int(self.freq5) <= 5945 and int(self.freq5) >= 5645):
-          print ("ok\n")
+          
           break
          
         else:
@@ -212,13 +217,13 @@ class FreqSet:
       if self.freq5 == None:
       	break
 
-      self.freq6 = input("Enter sixth video channel.\nEnter D if done entering channels => ").lower()
+      self.freq6 = input("\nEnter sixth video channel\n(Enter D if done) ==========> ").lower()
       
       try:
         
         if (self.freq6[0] in bands and self.freq6[1] in channels)\
         and len(self.freq6) == 2:
-          print ("ok\n")
+          
           break
 
         elif self.freq6 == 'd':
@@ -227,7 +232,7 @@ class FreqSet:
           break
 
         elif (int(self.freq6) <= 5945 and int(self.freq6) >= 5645):
-          print ("ok\n")
+          
           break
          
         else:
@@ -278,9 +283,10 @@ class FreqSet:
     bad_close = 0
     close = 0
     near = 0
-    #print()
-    #print(bad_freq)
-    #print(group)
+    
+    print('\n\n\n')
+    print('           --------------------------------------------------')
+    print('                 | IMD close to VTX channel instances |') 
 
     for i in range(len(group)):
       for sublst in bad_freq:
@@ -291,46 +297,49 @@ class FreqSet:
           for x in sublst:
             diff = abs(x - int(group[i]))
             if diff <20 and diff >= 10:
-              print("\nWarning: IMD on %s is quite close to %s.(%sMHz)" % (x, group[i], diff))
+              print("\nWarning: IMD on %s is quite close to %s (%s MHz)" % (x, group[i], diff))
               close += 1
 
             elif diff < 10:
-              print("\nWarning: IMD on %s is very close to %s.(%sMHz)" % (x, group[i], diff))
+              print("\nWarning: IMD on %s is very close to %s (%s MHz)" % (x, group[i], diff))
               bad_close += 1
 
             elif  diff < 35:
+              print("\nIMD on %s is close to %s (%s MHz)" % (x, group[i], diff))
               near += 1 
 
         elif int(group[i]) in sublst:
-          print("\nWarning %s will have terrible interference!" % (group[i]))
+          print("\n**Warning %s will have terrible interference! IMD exact match to VTX channel!**" % (group[i]))
           bad_match += 1
       
-      
+    print('\n           --------------------------------------------------')
+
+
     if bad_match + bad_close + close + near == 0:
-      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 	    All clear. Minimal IMD interference.")
+      print("\n\n\n\n\n                   -------ANALYSIS-------\n\n 	    All clear. Minimal IMD interference.")
 
     
     elif bad_match + bad_close + close == 0:
       
-      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 	   	IMD interference not too bad.\n")
+      print("\n\n\n\n\n                  -------ANALYSIS-------\n\n 	   	IMD interference not too bad.\n")
       
       if len(group) >= 5:
         print(" 	This is an excellent IMD rating for 5 or 6 channels.")
     
 
     elif bad_match == 0 and bad_close == 0:
-      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 	      Troubling interference possible.\n")
+      print("\n\n\n\n\n                  -------ANALYSIS-------\n\n 	      Troubling interference possible.\n")
       
       if len(group) >= 5:
         print(" 	     Good IMD rating for 5 and 6 channels.")
       
 
     elif bad_match == 0 and bad_close > 0:
-      print("\n\n\n\n\n\n\n\n\n\n\n\n                   -------ANALYSIS-------\n\n 		     IMD problems likley!\n 	   IMD within 10MHz of at least one channel.")
+      print("\n\n\n\n\n                   -------ANALYSIS-------\n\n 		     IMD problems likley!\n 	   IMD within 10MHz of at least one channel.")
 
     
     elif bad_match > 0:
-      print("\n\n\n\n\n\n\n\n\n\n\n\n 			 -------ANALYSIS-------\n\n 	  Bad channel grouping! Debilitating interference!")
+      print("\n\n\n\n\n 			 -------ANALYSIS-------\n\n 	  Bad channel grouping! Debilitating interference!")
     
     printable = self.convert_to_abbreviations()
 
@@ -429,7 +438,7 @@ class FreqSet:
     score_alt_weighted = None
     broadcast_factor = None
 
-    #print(bad_freq)
+    
 
     for i in range(len(group)):
       
@@ -479,7 +488,7 @@ class FreqSet:
 
     print("Number of Problem \nIMD frequencies: ============> " + str(divide_by) + "\n\n")
     print("Times problem IMD freq \nis close to VTX channel: ====> " + str(IMD_close_to_chan) + "\n\n")
-    print("Problem IMD freqs / Channels \nratio is: ===================> " + str(round(ratio, 1)) + "\n\n")
+    #print("Problem IMD freqs / Channels \nratio is: ===================> " + str(round(ratio, 1)) + "\n\n")
     print("Minimum Problem IMD\nfrequency seperation\nto VTX channel: =============> " + str(closest_imd) + " MHz\n(*within 35Mhz)\n\n")
 
     
@@ -493,7 +502,7 @@ class FreqSet:
       if closest_broadcast < 40:
           
         if closest_broadcast <= 19:
-            #score_alt = 0
+          score_alt = 0
           print("*****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast))      
 
         elif closest_broadcast < 35:
@@ -504,19 +513,16 @@ class FreqSet:
           
         broadcast_factor = (1 - ((40 - closest_broadcast) / 25))
 
-      if divide_by != 0:
+      if divide_by != 0 and score_alt != 0:
  
         score_alt =  100 - ((((float(score_total) /divide_by) ** .5) * 3) * .952)               
         score_alt = score_alt * (1 -(IMD_close_to_chan / 30))  # to reduce proportinal to close IMD channels
-        
-        
         
           
         if broadcast_factor != None:   
           score_alt = score_alt * broadcast_factor  # to reduce proportinal to close broadcast channels
 
-          #else:
-           # score_alt = 100 * broadcast_factor
+          
 
         else:
           print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
@@ -538,11 +544,11 @@ class FreqSet:
           score_alt = round(score_alt, 1)
 
       else:
-        if broadcast_factor == None:
+        if broadcast_factor == None and score_alt != 0:
           score_alt = 100
           print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
         
-        else:
+        elif score_alt != 0:
           score_alt = 100 * broadcast_factor
 
         
@@ -559,9 +565,9 @@ Weighted Video Clarity Score
 channels): ==================> {score}
         """.format(number=len(group), score=score_alt_weighted))
  
-    print("\nTop Possible Score is 100\n\n\n\n\n\n\n\n")
+    print("\nTop Possible Score is 100\n\n\n\n\n\n\n")
     
-    self.scores = [score_alt, score_alt_weighted]
+    self.scores = [score_alt, score_alt_weighted, closest_broadcast]
 
 
 
@@ -579,14 +585,15 @@ channels): ==================> {score}
       
       output_file = input("Name of output_file?")
       with open(output_file, "a") as f:
-        f.write("%s  %s   " % (self.scores[0], self.scores[1]))
+        f.write("%s  %s  %s   " % (self.scores[0], self.scores[1]), self.scores[2])
         for chan in group:
           f.write(str(chan) +" ",)
         f.write("\n")
 
     else:
+      
       with open(self.output, "a") as f:
-        f.write("%s  %s   " % (self.scores[0], self.scores[1]))
+        f.write("%s  %s  %s   " % (self.scores[0], self.scores[1], self.scores[2]))
         for chan in group:
           f.write(str(chan) +" ",)
         f.write("\n")
@@ -644,16 +651,14 @@ channels): ==================> {score}
       base_case = (l*(l-1)*(l-2)) / (3*2)
 
 
-    #loop = True
 
     while True:
       for i in range(len(channels)):
-        #print(float(combo_count), base_case)
+        
         channel_1 = channels[i]
         channel_1_used.append(channel_1)
         channels_2 = [channel for channel in channels if channel not in channel_1_used] 
-        #print('channels_2')   
-        #print(channels_2)
+        
         channel_2_used = []
         channels_2_redux = [channel for channel in channels_2]
         if num_channels == 3:
@@ -670,19 +675,14 @@ channels): ==================> {score}
           channels_2_redux.pop()
           channels_2_redux.pop()
           channels_2_redux.pop()
-        #print('channels_2_redux')
-        #print(channels_2_redux)
-        #print('channels_2')   
-        #print(channels_2)
+        
 
         for i in range(len(channels_2_redux)):
           channel_2 = channels_2_redux[i]
           channel_2_used.append(channel_2)
-          #print('channel_2_used')
-          #print(channel_2_used)
+          
           channels_3 = [channel for channel in channels_2 if channel not in channel_2_used]
-          #print("channels_3")
-          #print(channels_3)
+          
           channel_3_used = []
           channels_3_redux = [channel for channel in channels_3]
           if num_channels == 4:
@@ -694,8 +694,7 @@ channels): ==================> {score}
             channels_3_redux.pop()
             channels_3_redux.pop()
             channels_3_redux.pop()
-          #print("channels_3_redux")
-          #print(channels_3_redux)    
+             
 
           for i in range(len(channels_3_redux)):
             channel_3 = channels_3_redux[i]
@@ -738,13 +737,11 @@ channels): ==================> {score}
                         self.score(converted)
                         if self.scores[1] != None:
                           if self.scores[1] >= score_limit:
-                            #sorted_group = sorted(self.group)
-                            #if sorted_group not in good_groups:
-                              #good_groups.append(sorted_group)
+                            
                             self.export()
                         combo_count += 1
                         if combo_count >= (int(base_case)):
-                          #loop = False
+                          
                           return
                   
               
@@ -755,13 +752,11 @@ channels): ==================> {score}
                       self.score(converted)
                       if self.scores[1] != None:
                         if self.scores[1] >= score_limit:
-                          #sorted_group = sorted(self.group)
-                          #if sorted_group not in good_groups:
-                            #good_groups.append(sorted_group)
+                          
                           self.export()
                       combo_count += 1
                       if combo_count >= (int(base_case)):
-                        #loop = False
+                        
                         return 
          
                 else:
@@ -770,13 +765,11 @@ channels): ==================> {score}
                   converted = self.convert_freq_abbreviations()
                   self.score(converted)
                   if self.scores[0] >= score_limit:
-                    #sorted_group = sorted(self.group)
-                    #if sorted_group not in good_groups:
-                      #good_groups.append(sorted_group)
+                    
                     self.export()
                   combo_count += 1
                   if combo_count >= (int(base_case)):
-                    #loop = False
+                    
                     return
 
 
@@ -789,10 +782,9 @@ channels): ==================> {score}
                 self.export()  
               combo_count += 1
               if combo_count >= (int(base_case)):
-                #loop = False
+                
                 return
-              #print(combo_count, int(base_case))
-              #print(loop)
+              
             
           
 

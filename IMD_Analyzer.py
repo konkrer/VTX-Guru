@@ -1,7 +1,10 @@
 from FreqSet1 import FreqSet
 from time import sleep
 
+"""
+Run this script for IMD analysis of VTX channel group.
 
+"""
 
 
 
@@ -13,13 +16,13 @@ while True:
   x.analyze_interference(converted)
   x.score(converted)
   
-  export = input("Would you like to export channel group to file?\n\n(Enter X to export, press Enter to continue):").lower()
+  export = input("Would you like to export channel group to file?\n\n(Enter X to export, press Enter to continue): ").lower()
   if export == "x":
     x.export()
 
-  loop = input("\n\nEnter Q to quit. Press Enter to continue:").lower()
+  loop = input("\nEnter Q to quit. Press Enter to continue: ").lower()
   if loop =='q':
   	break
   else:
   	print("\n\nLet's go again...\n\n")
-  	sleep(.5)
+  	sleep(.25)
