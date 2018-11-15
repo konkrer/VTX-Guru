@@ -14,32 +14,17 @@ study groups available to chose.
 
 class FreqSet:
   
-  def __init__(self, freq1 = None, freq2 = None, freq3 = None, freq4 = None, freq5 = None, freq6 = None):
-    self.freq1 = freq1
-    self.freq2 = freq2
-    self.freq3 = freq3
-    self.freq4 = freq4
-    self.freq5 = freq5
-    self.freq6 = freq6
-    self.group = [self.freq1, self.freq2, self.freq3, self.freq4, self.freq5, self.freq6]
+  def __init__(self, lst=[None, None, None, None, None, None]):
+    
+    self.group = lst
     self.output = None
     self.scores = []
 
 
 
 
-
-
-
-
   def get_input(self):
     
-    if self.freq1 != None and self.freq2 != None:
-      
-      return self.group
-
-    bands = ['a', 'b', 'c', 'e', 'f', 'r']
-    channels = [str(x) for x in range(1,9)]
 
     print ("""
     
@@ -62,22 +47,25 @@ class FreqSet:
     
     """)
     
+    bands = ['a', 'b', 'c', 'e', 'f', 'r']
+    channels = [str(x) for x in range(1,9)]
+
 
                                         #first channel
 
     while True:
       
-      self.freq1 = input("\nEnter first video channel ==> ").lower()
+      self.group[0] = input("\nEnter first video channel ==> ").lower()
       
       try:
         
-        if (self.freq1[0] in bands and self.freq1[1] in channels)\
-        and len(self.freq1) == 2:
+        if (self.group[0][0] in bands and self.group[0][1] in channels)\
+        and len(self.group[0]) == 2:
           
           break
 
 
-        elif (int(self.freq1) <= 5945 and int(self.freq1) >= 5645):
+        elif (int(self.group[0]) <= 5945 and int(self.group[0]) >= 5645):
           
           break
          
@@ -93,12 +81,12 @@ class FreqSet:
 
     while True:
       
-      self.freq2 = input("\nEnter second video channel => ").lower()
+      self.group[1] = input("\nEnter second video channel => ").lower()
       
       try:
         
-        if (self.freq2[0] in bands and self.freq2[1] in channels)\
-        and len(self.freq2) == 2:
+        if (self.group[1][0] in bands and self.group[1][1] in channels)\
+        and len(self.group[1]) == 2:
           
           break
 
@@ -119,21 +107,21 @@ class FreqSet:
 
     while True:
       
-      self.freq3 = input("\nEnter third video channel\n(Enter D if done) ==========> ").lower()
+      self.group[2] = input("\nEnter third video channel\n(Enter D if done) ==========> ").lower()
       
       try:
         
-        if (self.freq3[0] in bands and self.freq3[1] in channels)\
-        and len(self.freq3) == 2:
+        if (self.group[2][0] in bands and self.group[2][1] in channels)\
+        and len(self.group[2]) == 2:
           
           break
 
-        elif self.freq3 == 'd':
+        elif self.group[2] == 'd':
           print("\n\n")
-          self.freq3 = None
+          self.group[2] = None
           break
 
-        elif (int(self.freq3) <= 5945 and int(self.freq3) >= 5645):
+        elif (int(self.group[2]) <= 5945 and int(self.group[2]) >= 5645):
           
           break
          
@@ -149,24 +137,24 @@ class FreqSet:
 
     while True:
       
-      if self.freq3 == None:
+      if self.group[2] == None:
       	break
 
-      self.freq4 = input("\nEnter fourth video channel\n(Enter D if done) ==========> ").lower()
+      self.group[3] = input("\nEnter fourth video channel\n(Enter D if done) ==========> ").lower()
       
       try:
         
-        if (self.freq4[0] in bands and self.freq4[1] in channels)\
-        and len(self.freq4) == 2:
+        if (self.group[3][0] in bands and self.group[3][1] in channels)\
+        and len(self.group[3]) == 2:
           
           break
 
-        elif self.freq4 == 'd':
-          self.freq4 = None
+        elif self.group[3] == 'd':
+          self.group[3] = None
           print("\n\n")
           break
 
-        elif (int(self.freq4) <= 5945 and int(self.freq4) >= 5645):
+        elif (int(self.group[3]) <= 5945 and int(self.group[3]) >= 5645):
           
           break
          
@@ -182,24 +170,24 @@ class FreqSet:
 
     while True:
 
-      if self.freq4 == None:
+      if self.group[3] == None:
       	break
 
-      self.freq5 = input("\nEnter fifth video channel\n(Enter D if done) ==========> ").lower()
+      self.group[4] = input("\nEnter fifth video channel\n(Enter D if done) ==========> ").lower()
       
       try:
         
-        if (self.freq5[0] in bands and self.freq5[1] in channels)\
-        and len(self.freq5) == 2:
+        if (self.group[4][0] in bands and self.group[4][1] in channels)\
+        and len(self.group[4]) == 2:
           
           break
 
-        elif self.freq5 == 'd':
-          self.freq5 = None
+        elif self.group[4] == 'd':
+          self.group[4] = None
           print("\n\n")
           break
 
-        elif (int(self.freq5) <= 5945 and int(self.freq5) >= 5645):
+        elif (int(self.group[4]) <= 5945 and int(self.group[4]) >= 5645):
           
           break
          
@@ -214,24 +202,24 @@ class FreqSet:
 
     while True:
       
-      if self.freq5 == None:
+      if self.group[4] == None:
       	break
 
-      self.freq6 = input("\nEnter sixth video channel\n(Enter D if done) ==========> ").lower()
+      self.group[5] = input("\nEnter sixth video channel\n(Enter D if done) ==========> ").lower()
       
       try:
         
-        if (self.freq6[0] in bands and self.freq6[1] in channels)\
-        and len(self.freq6) == 2:
+        if (self.group[5][0] in bands and self.group[5][1] in channels)\
+        and len(self.group[5]) == 2:
           
           break
 
-        elif self.freq6 == 'd':
-          self.freq6 = None
+        elif self.group[5] == 'd':
+          self.group[5] = None
           print("\n\n")
           break
 
-        elif (int(self.freq6) <= 5945 and int(self.freq6) >= 5645):
+        elif (int(self.group[5]) <= 5945 and int(self.group[5]) >= 5645):
           
           break
          
@@ -242,7 +230,6 @@ class FreqSet:
       	print("\nTry Again.\n")
 
 
-    self.group = [self.freq1, self.freq2, self.freq3, self.freq4, self.freq5, self.freq6]
     return self.group
 
   
@@ -257,8 +244,8 @@ class FreqSet:
     freq_bad = []
   
     for i in range(len(group)):
-      temp = (i + 1)
-      rest = group[:i] + group[temp:]
+      #temp = (i + 1)
+      rest = group[:i] + group[i + 1:]
       lst_bad = []
       for n in range(len(rest)):
         bad_one = (int(group[i]) * 2) - int(rest[n])
@@ -488,7 +475,7 @@ class FreqSet:
 
     print("Number of Problem \nIMD frequencies: ============> " + str(divide_by) + "\n\n")
     print("Times problem IMD freq \nis close to VTX channel: ====> " + str(IMD_close_to_chan) + "\n\n")
-    #print("Problem IMD freqs / Channels \nratio is: ===================> " + str(round(ratio, 1)) + "\n\n")
+    print("Problem IMD close / Channels \nratio is: ===================> " + str(round(ratio, 1)) + "\n\n")
     print("Minimum Problem IMD\nfrequency seperation\nto VTX channel: =============> " + str(closest_imd) + " MHz\n(*within 35Mhz)\n\n")
 
     
@@ -605,6 +592,7 @@ channels): ==================> {score}
 
 
   def investigate(self, score_limit=60):
+
     
     num_channels =  int(input("How many in channel group to investigate? (3-6): "))
     
@@ -622,6 +610,8 @@ channels): ==================> {score}
 
     self.output = input("Filename to output data?")
 
+    
+
     channels = []
 
     with open('vtx_channel_guide_abrv.txt', 'r') as f:
@@ -635,22 +625,128 @@ channels): ==================> {score}
       channels.remove('e7')
       channels.remove('e8')
 
-    #good_groups = []
-    channel_1_used = []
-    base_case = None
-    combo_count = 0
+    gen = combo_explor(channels, num_channels)
+
+    coutner = 0
+
+    while True:
+      
+      out = next(gen)
+
+      if out == None:
+        break
+
+      flat = flatten(out)
+      self.group = flat
+      print(self.group)
+
+      converted = self.convert_freq_abbreviations()
+      self.score(converted)
+
+      if num_channels > 4:
+        if self.scores[1] != None:
+          if self.scores[1] >= score_limit:
+            self.export()
+
+      else:
+        if self.scores[0] >= score_limit:
+          self.export()
+      
+      coutner+=1
+
+    print("%s combinations checked!" % (coutner))
+
     
-    l = len(channels)
-    if num_channels == 6:
-      base_case = (l*(l-1)*(l-2)*(l-3)*(l-4)*(l-5)) / (6*5*4*3*2)
-    elif num_channels == 5:
-      base_case = (l*(l-1)*(l-2)*(l-3)*(l-4)) / (5*4*3*2)
-    elif num_channels == 4:
-      base_case = (l*(l-1)*(l-2)*(l-3)) / (4*3*2)
-    elif num_channels == 3:
-      base_case = (l*(l-1)*(l-2)) / (3*2)
+    
+    
 
 
+   
+
+def combo_explor(lst, combo_of):
+
+  first_count = 0
+
+  if combo_of == 1:
+    
+    while True:
+
+      for i in range(len(lst)):
+
+        if i == 0:
+          first_count += 1
+
+        if first_count ==2:
+          yield (None)
+
+        yield (lst[i])
+
+  else:
+
+    end_shortened = lst[:-(combo_of-1)]
+
+    while True:
+
+      for i in range(len(end_shortened)):
+
+        if i == 0:
+          first_count += 1
+
+        if first_count ==2:
+          yield (None)
+
+        option = end_shortened[i]
+
+        rest = combo_explor(lst[i+1:], combo_of-1)
+
+        while True:
+
+          nxt = next(rest)           
+          if nxt == None:
+            break                           
+
+          yield option, nxt
+
+
+
+
+
+def flatten(tup):
+
+  if tup == None:
+    return None
+
+  flat_list = []
+
+  if not isinstance(tup[1], tuple):
+    flat_list = [tup[0], tup[1]]
+    return flat_list
+
+  else:
+
+    x = tup[0]
+    flat_list.append(x)
+    y = tup[1]
+    z = flatten(y)
+
+    flat_list += z
+
+    return flat_list
+
+
+
+
+
+   
+
+'''
+l = len(channels)
+    
+    base_case = factorial(l, num_channels) / factorial(num_channels)
+
+
+    channel_1_used = []
+    combo_count = 0
 
     while True:
       for i in range(len(channels)):
@@ -661,6 +757,7 @@ channels): ==================> {score}
         
         channel_2_used = []
         channels_2_redux = [channel for channel in channels_2]
+
         if num_channels == 3:
           channels_2_redux.pop()
         elif num_channels == 4:
@@ -700,6 +797,7 @@ channels): ==================> {score}
             channel_3 = channels_3_redux[i]
           
             if num_channels >= 4:
+
               channel_3_used.append(channel_3)
               channels_4 = [channel for channel in channels_3 if channel not in channel_3_used]
               channel_4_used = []
@@ -714,11 +812,14 @@ channels): ==================> {score}
                 channel_4 = channels_4_redux[i]
               
                 if num_channels >= 5:
+
                   channel_4_used.append(channel_4)
                   channels_5 = [channel for channel in channels_4 if channel not in channel_4_used]
                   channel_5_used = []
                   channels_5_redux = [channel for channel in channels_5]
+
                   if num_channels == 6:
+
                     channels_5_redux.pop()
 
                   for i in range(len(channels_5_redux)):
@@ -736,65 +837,75 @@ channels): ==================> {score}
                         print(self.group)
                         self.score(converted)
                         if self.scores[1] != None:
-                          if self.scores[1] >= score_limit:
-                            
+                          if self.scores[1] >= score_limit: 
                             self.export()
+
                         combo_count += 1
-                        if combo_count >= (int(base_case)):
-                          
+                        if combo_count == (int(base_case)):
                           return
                   
               
                     else:
+
                       self.group = [channel_1, channel_2, channel_3, channel_4, channel_5]
                       print(self.group)
                       converted = self.convert_freq_abbreviations()
                       self.score(converted)
                       if self.scores[1] != None:
-                        if self.scores[1] >= score_limit:
-                          
+                        if self.scores[1] >= score_limit: 
                           self.export()
+
                       combo_count += 1
-                      if combo_count >= (int(base_case)):
-                        
+                      if combo_count == (int(base_case)):
                         return 
          
                 else:
+
                   self.group = [channel_1, channel_2, channel_3, channel_4]
                   print(self.group)
                   converted = self.convert_freq_abbreviations()
                   self.score(converted)
                   if self.scores[0] >= score_limit:
-                    
                     self.export()
+
                   combo_count += 1
-                  if combo_count >= (int(base_case)):
-                    
+                  if combo_count == (int(base_case)):
                     return
 
 
             else:
+
               self.group = [channel_1, channel_2, channel_3]
               print(self.group)
               converted = self.convert_freq_abbreviations()
               self.score(converted)
               if self.scores[0] >= score_limit:
                 self.export()  
+
               combo_count += 1
-              if combo_count >= (int(base_case)):
-                
+              if combo_count == (int(base_case)):
                 return
               
             
           
+def factorial(n, limit=None):
 
+  
+  if limit != None:
+    if limit == 1:
+      return n
 
-
-
-   
-
-
-
+  if n == 1:
+    return n
+  
+  else:
+    
+    if limit != None:
+      return n * factorial(n-1, limit-1)
+    
+    else:
+      return n * factorial(n-1)
+'''      
 
 
 
