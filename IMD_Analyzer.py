@@ -1,4 +1,4 @@
-from FreqSet1 import FreqSet
+from libr.FreqSet1 import FreqSet
 from time import sleep
 
 """

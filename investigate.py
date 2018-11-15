@@ -1,8 +1,8 @@
-from FreqSet1 import FreqSet
+from libr.FreqSet1 import FreqSet
 
 """
 --------------------------------------------
-Run this script to perform an investigation.
+investigate.py - Run this script to perform an investigation.
 --------------------------------------------
 
 """
