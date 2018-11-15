@@ -244,12 +244,15 @@ class FreqSet:
     freq_bad = []
   
     for i in range(len(group)):
-      #temp = (i + 1)
+      
       rest = group[:i] + group[i + 1:]
       lst_bad = []
+      
       for n in range(len(rest)):
+
         bad_one = (int(group[i]) * 2) - int(rest[n])
         lst_bad.append(bad_one)
+
       freq_bad.append(lst_bad)
 
 
@@ -352,7 +355,7 @@ class FreqSet:
     converter = {}
     converted = []
 
-    with open('vtx_channel_guide.txt', 'r') as f:
+    with open('libr/vtx_channel_guide.txt', 'r') as f:
       for line in f:
 
         sliced_raw = line.split(', ')
@@ -382,7 +385,7 @@ class FreqSet:
     converter = {}
     converted = []
 
-    with open('vtx_channel_guide_abrv.txt', 'r') as f:
+    with open('libr/vtx_channel_guide_abrv.txt', 'r') as f:
       for line in f:
 
         sliced_raw = line.split(', ')
@@ -614,7 +617,7 @@ channels): ==================> {score}
 
     channels = []
 
-    with open('vtx_channel_guide_abrv.txt', 'r') as f:
+    with open('libr/vtx_channel_guide_abrv.txt', 'r') as f:
       for line in f:
 
         sliced_raw = line.split(', ')
