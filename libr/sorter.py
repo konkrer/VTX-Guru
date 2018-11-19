@@ -38,7 +38,7 @@ def quicksort(lst, start, end):
 				lst[marker], lst[i] = lst[i], lst[marker]
 				marker += 1
 			elif get_vtx_sep(lst[i]) == get_vtx_sep(pivot_value):
-				if lst[i] > pivot_value:
+				if lst[i] < pivot_value:
 					lst[marker], lst[i] = lst[i], lst[marker]
 					marker += 1
 

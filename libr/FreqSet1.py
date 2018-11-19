@@ -422,31 +422,30 @@ class FreqSet:
     score_total = 0
     divide_by = 0
     IMD_close_to_chan = 0
+    broadcast_close_times = 0
     closest_imd = None
     closest_broadcast = None
+    broadcast_factor = None
     score_alt = None
     score_alt_weighted = None
-    broadcast_factor = None
 
     
 
-    for i in range(len(group)):
-      
-      other_chans = [freq for freq in group if freq != group[i]]
-      
-      for chan in other_chans:
+    sorted_group = sorted(group, reverse=True)
+    for i in range(len(sorted_group) - 1):
+      seperation = sorted_group[i] - sorted_group[i+1]
+      if closest_broadcast:
+        if seperation < closest_broadcast:
+          closest_broadcast = seperation
+      else:
+        closest_broadcast = seperation
 
-        diff2 = abs(chan - int(group[i]))
+      if seperation < 40:
+        broadcast_close_times += 1
         
-        if closest_broadcast == None:
-          closest_broadcast = diff2
-          
-        else:
-          if diff2 < closest_broadcast:
-              closest_broadcast = diff2
 
 
-    
+
     for sublst in bad_freq:
       for x in sublst:
         worst = None
@@ -487,56 +486,56 @@ class FreqSet:
       if printz:
         print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
     
+    if closest_broadcast <= 27:
+      score_alt = 0
+      if printz:
+        print("*****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast)) 
     
     else:
 
       if closest_broadcast < 40:
-          
-        if closest_broadcast <= 19:
-          score_alt = 0
+           
+        if closest_broadcast < 35:
           if printz:
-            print("*****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast))      
-
-        elif closest_broadcast < 35:
-          if printz:
-            print("***VTX channels close! %s MHz apart.***\n\n" % (closest_broadcast))
+             print("***VTX channels close! %s MHz apart.***\n\n" % (closest_broadcast))
 
         else:
           if printz:
             print("Minimum VTX\nChannel seperation  =========> %sMHz\n(Channels getting close!)\n\n" % (closest_broadcast))
-          
-        broadcast_factor = (1 - ((40 - closest_broadcast) / 25))
+            
+        broad_score = (40 - closest_broadcast)
+        
+        if closest_broadcast < 37:
+          broadcast_factor = (1 - (broad_score / (26 - broad_score))) * (1/broadcast_close_times)
+        
+        else:
+          broadcast_factor = (1 - (broad_score / (26 - broad_score)))
+
 
       if divide_by != 0:
- 
+
         score_alt =  100 - ((((float(score_total) /divide_by) ** .5) * 3) * .952)               
         score_alt = score_alt * (1 -(IMD_close_to_chan / 30))  # to reduce proportinal to close IMD channels
         
           
-        if broadcast_factor != None:   
-          score_alt = score_alt * broadcast_factor  # to reduce proportinal to close broadcast channels
-
-          
+        if broadcast_factor:   
+          score_alt = score_alt * broadcast_factor  # to reduce proportinal to close broadcast channels         
 
         else:
           if printz:
             print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
         
         
-
         if len(group) == 6:
           
           score_alt_weighted = round(score_alt * 2.204, 1)  # old factor 1.966
-          score_alt = round(score_alt, 2)
+          
         
         elif len(group) == 5:
           
           compressor =  ((80.0053 - score_alt) / 6.1) + score_alt
           score_alt_weighted = round((compressor + 20), 1) 
-          score_alt = round(score_alt, 2)
-        
-        else: 
-          score_alt = round(score_alt, 2)
+          
 
       else:
         if broadcast_factor == None:
@@ -554,7 +553,7 @@ class FreqSet:
 
 
     if printz:
-      print("Video Clarity Score: ========> {score}\n".format(score=score_alt))
+      print("Video Clarity Score: ========> {:.2f}\n".format(round(score_alt, 2)))
       if score_alt_weighted:
         print("""
 Weighted Video Clarity Score
@@ -582,7 +581,7 @@ channels): ==================> {score}
       
       output_file = input("Name of output_file?")
       with open(output_file, "a") as f:
-        f.write("%s  %s  %s   " % (self.scores[0], self.scores[1]), self.scores[2])
+        f.write("%s  %s  %s   " % (round(self.scores[0], 2), self.scores[1]), self.scores[2])
         for chan in group:
           f.write(str(chan) +" ")
         f.write("\n")
@@ -590,7 +589,7 @@ channels): ==================> {score}
     else:
       
       with open(self.output, "a") as f:
-        f.write("%s  %s  %s   " % (self.scores[0], self.scores[1], self.scores[2]))
+        f.write("%.2f  %s  %s   " % (round(self.scores[0], 2), self.scores[1], self.scores[2]))
         for chan in group:
           f.write(str(chan) +" ",)
         f.write("\n")
@@ -922,7 +921,34 @@ def factorial(n, limit=None):
 
 
 
+'''
+    for i in range(len(group)):
+      
+      bct = 0
+      other_chans = [freq for freq in group if freq != group[i]]
+      
+      for chan in other_chans:
 
+        diff2 = abs(chan - int(group[i]))
+        if diff2 < 40:
+            bct += 1
+
+        if closest_broadcast == None:
+          closest_broadcast = diff2
+
+        else:
+          if diff2 < closest_broadcast:
+              closest_broadcast = diff2
+      
+      if btc > 0:
+        if broadcast_close_times == 0:
+          broadcast_close_times = bct
+
+        else:
+          if btc > broadcast_close_times:
+            broadcast_close_times = bct
+
+'''    
 
 
 
