@@ -2,7 +2,7 @@
 
 """
 A class made to hold a frequency group of 5GHz FPV VTX channels,
-then analyze or score for IMD interference level.
+then analyze and/or score for IMD interference level.
 
 Investigate method allows for investigating all possible combinations
 of channels in study group. Currently, only worldwide(40 chan) and USA only(37 chan)
@@ -31,7 +31,7 @@ class FreqSet:
 ==========================================================================
 ==========================================================================
 
-                          ~ VTX Guru ~
+                          ~ VTX Guru ~ 
 
                 FPV VTX CHANNEL INTERFERENCE CHECKER
                           (IMD Analyzer)
@@ -91,7 +91,7 @@ class FreqSet:
           break
 
 
-        elif (int(self.freq2) <= 5945 and int(self.freq2) >= 5645):
+        elif (int(self.group[1]) <= 5945 and int(self.group[1]) >= 5645):
           
           break
          
@@ -416,7 +416,7 @@ class FreqSet:
 
 
 
-  def score(self, group):
+  def score(self, group, printz=True):
     
     bad_freq = self.check_freqz(group)
     score_total = 0
@@ -475,16 +475,17 @@ class FreqSet:
 
     ratio = (IMD_close_to_chan / len(group))
 
-
-    print("Number of Problem \nIMD frequencies: ============> " + str(divide_by) + "\n\n")
-    print("Times problem IMD freq \nis close to VTX channel: ====> " + str(IMD_close_to_chan) + "\n\n")
-    print("Problem IMD close / Channels \nratio is: ===================> " + str(round(ratio, 1)) + "\n\n")
-    print("Minimum Problem IMD\nfrequency seperation\nto VTX channel: =============> " + str(closest_imd) + " MHz\n(*within 35Mhz)\n\n")
+    if printz:
+      print("Number of Problem \nIMD frequencies: ============> " + str(divide_by) + "\n\n")
+      print("Times problem IMD freq \nis close to VTX channel: ====> " + str(IMD_close_to_chan) + "\n\n")
+      print("Problem IMD close / Channels \nratio is: ===================> " + str(round(ratio, 1)) + "\n\n")
+      print("Minimum Problem IMD\nfrequency seperation\nto VTX channel: =============> " + str(closest_imd) + " MHz\n(*within 35Mhz)\n\n")
 
     
     if closest_imd == 0:
       score_alt = 0
-      print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
+      if printz:
+        print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
     
     
     else:
@@ -493,17 +494,20 @@ class FreqSet:
           
         if closest_broadcast <= 19:
           score_alt = 0
-          print("*****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast))      
+          if printz:
+            print("*****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast))      
 
         elif closest_broadcast < 35:
-          print("***VTX channels close! %s MHz apart.***\n\n" % (closest_broadcast))
+          if printz:
+            print("***VTX channels close! %s MHz apart.***\n\n" % (closest_broadcast))
 
         else:
-          print("Minimum VTX\nChannel seperation  =========> %sMHz\n(Channels getting close!)\n\n" % (closest_broadcast))
+          if printz:
+            print("Minimum VTX\nChannel seperation  =========> %sMHz\n(Channels getting close!)\n\n" % (closest_broadcast))
           
         broadcast_factor = (1 - ((40 - closest_broadcast) / 25))
 
-      if divide_by != 0 and score_alt != 0:
+      if divide_by != 0:
  
         score_alt =  100 - ((((float(score_total) /divide_by) ** .5) * 3) * .952)               
         score_alt = score_alt * (1 -(IMD_close_to_chan / 30))  # to reduce proportinal to close IMD channels
@@ -515,31 +519,33 @@ class FreqSet:
           
 
         else:
-          print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
+          if printz:
+            print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
         
         
 
         if len(group) == 6:
           
           score_alt_weighted = round(score_alt * 2.204, 1)  # old factor 1.966
-          score_alt = round(score_alt, 1)
+          score_alt = round(score_alt, 2)
         
         elif len(group) == 5:
           
           compressor =  ((80.0053 - score_alt) / 6.1) + score_alt
           score_alt_weighted = round((compressor + 20), 1) 
-          score_alt = round(score_alt, 1)
+          score_alt = round(score_alt, 2)
         
         else: 
-          score_alt = round(score_alt, 1)
+          score_alt = round(score_alt, 2)
 
       else:
-        if broadcast_factor == None and score_alt != 0:
-          score_alt = 100
-          print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
+        if broadcast_factor == None:
+          score_alt = 100.0
+          if printz:
+            print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
         
-        elif score_alt != 0:
-          score_alt = 100 * broadcast_factor
+        else:
+          score_alt = 100.0 * broadcast_factor
 
         
 
@@ -547,15 +553,16 @@ class FreqSet:
 
 
 
-    print("Video Clarity Score: ========> {score}\n".format(score=score_alt))
-    if score_alt_weighted != None:
-      print("""
+    if printz:
+      print("Video Clarity Score: ========> {score}\n".format(score=score_alt))
+      if score_alt_weighted:
+        print("""
 Weighted Video Clarity Score
 (weighted relevant to {number}
 channels): ==================> {score}
         """.format(number=len(group), score=score_alt_weighted))
  
-    print("\nTop Possible Score is 100\n\n\n\n\n\n\n")
+      print("\nTop Possible Score is 100\n\n\n\n\n\n\n")
     
     self.scores = [score_alt, score_alt_weighted, closest_broadcast]
 
@@ -577,7 +584,7 @@ channels): ==================> {score}
       with open(output_file, "a") as f:
         f.write("%s  %s  %s   " % (self.scores[0], self.scores[1]), self.scores[2])
         for chan in group:
-          f.write(str(chan) +" ",)
+          f.write(str(chan) +" ")
         f.write("\n")
 
     else:
@@ -641,10 +648,10 @@ channels): ==================> {score}
 
       flat = flatten(out)
       self.group = flat
-      print(self.group)
+      #print(self.group)
 
       converted = self.convert_freq_abbreviations()
-      self.score(converted)
+      self.score(converted, False)
 
       if num_channels > 4:
         if self.scores[1] != None:
