@@ -39,7 +39,7 @@ class FreqSet:
     
     Transmitting on two or more video channels can cause problems.
     Enter two to six channels to check for interference.
-
+    
 
     Enter Band Channel abbreviation or four digit frequency.
     -Bands: A - B - E - F - R(C)
@@ -55,26 +55,34 @@ class FreqSet:
 
     while True:
       
-      self.group[0] = input("\nEnter first video channel ==> ").lower()
+      self.group[0] = input("\nEnter first VTX channel -OR-\nenter G to input entire group at once ==> ").lower()
       
-      try:
-        
-        if (self.group[0][0] in bands and self.group[0][1] in channels)\
-        and len(self.group[0]) == 2:
-          
-          break
-
-
-        elif (int(self.group[0]) <= 5945 and int(self.group[0]) >= 5645):
-          
-          break
          
-        else:
-        	print("\nTry Again.\n")
+      if self.group[0] == 'g':
+        while True:
+          string_group = input('\nEnter channel group ======> ')
+          input_group_init = string_group.split(' ')
+          input_group = [x for x in input_group_init if x != '']
 
-      except (ValueError, IndexError):
-      	print("\nTry Again.\n")
+          if len(input_group) < 2 or len(input_group) > 6:
+            print('Try again.')
+            continue
 
+          ok = True
+          for chan in input_group:
+            if not self.check_channel_input(chan, bands, channels):
+              ok = False
+              break
+          if not ok:
+            continue
+
+          self.group = input_group
+          return
+
+
+      elif self.check_channel_input(self.group[0], bands, channels):
+
+        break
     
                                          #second channel
 
@@ -83,24 +91,9 @@ class FreqSet:
       
       self.group[1] = input("\nEnter second video channel => ").lower()
       
-      try:
-        
-        if (self.group[1][0] in bands and self.group[1][1] in channels)\
-        and len(self.group[1]) == 2:
-          
-          break
+      if self.check_channel_input(self.group[1], bands, channels):
 
-
-        elif (int(self.group[1]) <= 5945 and int(self.group[1]) >= 5645):
-          
-          break
-         
-        else:
-        	print("\nTry Again.\n")
-
-      except (ValueError, IndexError):
-      	print("\nTry Again.\n")
-
+        break
 
                                         #third channel
 
@@ -109,28 +102,13 @@ class FreqSet:
       
       self.group[2] = input("\nEnter third video channel\n(Enter D if done) ==========> ").lower()
       
-      try:
-        
-        if (self.group[2][0] in bands and self.group[2][1] in channels)\
-        and len(self.group[2]) == 2:
-          
-          break
-
-        elif self.group[2] == 'd':
-          print("\n\n")
+      if self.group[2] == 'd':
           self.group[2] = None
           break
 
-        elif (int(self.group[2]) <= 5945 and int(self.group[2]) >= 5645):
-          
-          break
-         
-        else:
-        	print("\nTry Again.\n")
+      if self.check_channel_input(self.group[2], bands, channels):
 
-      except (ValueError, IndexError):
-      	print("\nTry Again.\n")
-
+        break
 
                                          #fourth channel
 
@@ -142,28 +120,13 @@ class FreqSet:
 
       self.group[3] = input("\nEnter fourth video channel\n(Enter D if done) ==========> ").lower()
       
-      try:
-        
-        if (self.group[3][0] in bands and self.group[3][1] in channels)\
-        and len(self.group[3]) == 2:
-          
-          break
-
-        elif self.group[3] == 'd':
+      if self.group[3] == 'd':
           self.group[3] = None
-          print("\n\n")
           break
 
-        elif (int(self.group[3]) <= 5945 and int(self.group[3]) >= 5645):
-          
-          break
-         
-        else:
-        	print("\nTry Again.\n")
+      if self.check_channel_input(self.group[3], bands, channels):
 
-      except (ValueError, IndexError):
-      	print("\nTry Again.\n")
-
+        break
 
                                         #fifth channel
 
@@ -175,27 +138,12 @@ class FreqSet:
 
       self.group[4] = input("\nEnter fifth video channel\n(Enter D if done) ==========> ").lower()
       
-      try:
-        
-        if (self.group[4][0] in bands and self.group[4][1] in channels)\
-        and len(self.group[4]) == 2:
-          
-          break
-
-        elif self.group[4] == 'd':
+      if self.group[4] == 'd':
           self.group[4] = None
-          print("\n\n")
           break
 
-        elif (int(self.group[4]) <= 5945 and int(self.group[4]) >= 5645):
-          
-          break
-         
-        else:
-        	print("\nTry Again.\n")
-
-      except (ValueError, IndexError):
-      	print("\nTry Again.\n")
+      if self.check_channel_input(self.group[4], bands, channels):
+        break
 
                                      #sixth channel
 
@@ -207,34 +155,41 @@ class FreqSet:
 
       self.group[5] = input("\nEnter sixth video channel\n(Enter D if done) ==========> ").lower()
       
-      try:
-        
-        if (self.group[5][0] in bands and self.group[5][1] in channels)\
-        and len(self.group[5]) == 2:
-          
-          break
-
-        elif self.group[5] == 'd':
+      if self.group[5] == 'd':
           self.group[5] = None
-          print("\n\n")
           break
 
-        elif (int(self.group[5]) <= 5945 and int(self.group[5]) >= 5645):
-          
-          break
-         
-        else:
-        	print("\nTry Again.\n")
+      if self.check_channel_input(self.group[5], bands, channels):
+        break
 
-      except (ValueError, IndexError):
-      	print("\nTry Again.\n")
-
-    
-    return self.group
+    print('\n\n')
 
   
 
 
+
+  def check_channel_input(self, chan_input, bands, channels):
+
+    try:
+        
+      if (chan_input[0] in bands and chan_input[1] in channels)\
+      and len(chan_input) == 2:
+          
+        return True
+
+
+      elif (int(chan_input) <= 5945 and int(chan_input) >= 5645):
+          
+        return True
+         
+      else:
+        print("\nTry Again.\n")
+        return False
+
+
+    except (ValueError, IndexError):
+      print("\nTry Again.\n")
+      return False
 
 
 
@@ -432,13 +387,16 @@ class FreqSet:
     
 
     sorted_group = sorted(group, reverse=True)
+
     for i in range(len(sorted_group) - 1):
       seperation = sorted_group[i] - sorted_group[i+1]
-      if closest_broadcast:
+      
+      if closest_broadcast == None:
+        closest_broadcast = seperation
+
+      else:
         if seperation < closest_broadcast:
           closest_broadcast = seperation
-      else:
-        closest_broadcast = seperation
 
       if seperation < 40:
         broadcast_close_times += 1
@@ -591,6 +549,10 @@ channels): ==================> {score}
           f.write(str(chan) +" ")
         f.write('-- ')
         for freq in converted:
+          f.write(str(freq) + " ",)
+        f.write('-- ')
+        converted.sort()
+        for freq in converted:
           f.write(str(freq) + " ",) 
         f.write("\n")
 
@@ -602,6 +564,10 @@ channels): ==================> {score}
         for chan in group:
           f.write(str(chan) + " ",)
         f.write('-- ')
+        for freq in converted:
+          f.write(str(freq) + " ",)
+        f.write('-- ')
+        converted.sort()
         for freq in converted:
           f.write(str(freq) + " ",)
         f.write("\n")
@@ -966,3 +932,22 @@ def factorial(n, limit=None):
 
 
     
+'''
+      try:
+        
+        if (self.group[1][0] in bands and self.group[1][1] in channels)\
+        and len(self.group[1]) == 2:
+          
+          break
+
+
+        elif (int(self.group[1]) <= 5945 and int(self.group[1]) >= 5645):
+          
+          break
+         
+        else:
+          print("\nTry Again.\n")
+
+      except (ValueError, IndexError):
+        print("\nTry Again.\n")
+'''
