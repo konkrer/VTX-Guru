@@ -229,7 +229,7 @@ class FreqSet:
       except (ValueError, IndexError):
       	print("\nTry Again.\n")
 
-
+    
     return self.group
 
   
@@ -484,9 +484,12 @@ class FreqSet:
     if closest_imd == 0:
       score_alt = 0
       if printz:
-        print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
+        if closest_broadcast <= 27:
+          print("*****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast))
+        else:
+          print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
     
-    if closest_broadcast <= 27:
+    elif closest_broadcast <= 27:
       score_alt = 0
       if printz:
         print("*****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast)) 
@@ -564,6 +567,7 @@ channels): ==================> {score}
       print("\nTop Possible Score is 100\n\n\n\n\n\n\n")
     
     self.scores = [score_alt, score_alt_weighted, closest_broadcast]
+    #print(self.scores)
 
 
 
@@ -572,26 +576,34 @@ channels): ==================> {score}
 
 
 
+  def export(self, converted):
 
-  def export(self):
-
-    group = [freq for freq in self.group if freq != None]
+    
+    
     
     if self.output == None:
       
+      abbreviations = self.convert_to_abbreviations()
       output_file = input("Name of output_file?")
       with open(output_file, "a") as f:
-        f.write("%s  %s  %s   " % (round(self.scores[0], 2), self.scores[1]), self.scores[2])
-        for chan in group:
+        f.write("%s  %s  %s   " % (round(self.scores[0], 2), self.scores[1], self.scores[2]))
+        for chan in abbreviations:
           f.write(str(chan) +" ")
+        f.write('-- ')
+        for freq in converted:
+          f.write(str(freq) + " ",) 
         f.write("\n")
 
     else:
-      
+
+      group = [freq for freq in self.group if freq != None]
       with open(self.output, "a") as f:
         f.write("%.2f  %s  %s   " % (round(self.scores[0], 2), self.scores[1], self.scores[2]))
         for chan in group:
-          f.write(str(chan) +" ",)
+          f.write(str(chan) + " ",)
+        f.write('-- ')
+        for freq in converted:
+          f.write(str(freq) + " ",)
         f.write("\n")
  
 
@@ -655,11 +667,11 @@ channels): ==================> {score}
       if num_channels > 4:
         if self.scores[1] != None:
           if self.scores[1] >= score_limit:
-            self.export()
+            self.export(converted)
 
       else:
         if self.scores[0] >= score_limit:
-          self.export()
+          self.export(converted)
       
       coutner+=1
 

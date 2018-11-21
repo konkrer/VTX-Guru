@@ -18,7 +18,7 @@ while True:
   
   export = input("Would you like to export channel group to file?\n\n(Enter X to export, press Enter to continue): ").lower()
   if export == "x":
-    x.export()
+    x.export(converted)
 
   loop = input("\nEnter Q to quit. Press Enter to continue: ").lower()
   if loop =='q':
