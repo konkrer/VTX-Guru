@@ -16,13 +16,14 @@ while True:
   x.analyze_interference(converted)
   x.score(converted)
   
-  export = input("Would you like to export channel group to file?\n\n(Enter X to export, press Enter to continue): ").lower()
+  export = input("-Would you like to export channel group to file?-\n\n(Enter X to export, press Enter to continue): ").lower()
   if export == "x":
     x.export(converted)
 
-  loop = input("\nEnter Q to quit. Press Enter to continue: ").lower()
+  loop = input("\n-Enter Q to quit. Press Enter to continue: ").lower()
   if loop =='q':
-  	break
+    break
   else:
-  	print("\n\nLet's go again...\n\n")
-  	sleep(.25)
+    print("\n\nLet's go again...\n\n")
+    sleep(.25)
+    

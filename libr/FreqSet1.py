@@ -46,125 +46,66 @@ class FreqSet:
     -Channels: 1-8
     
     """)
+
     
+    for i in range(0,6):
+      nex = self.ask_question(i)
+      if nex == False:
+        print('\n\n')
+        return
+   
+
+  def ask_question(self, ques_num):
+
+    questions =[
+      "\nEnter first VTX channel -OR-\nenter G to input entire group at once ==> ",
+      "\nEnter second video channel => ",
+      "\nEnter third video channel\n(Enter D if done) ==========> ",
+      "\nEnter fourth video channel\n(Enter D if done) ==========> ",
+      "\nEnter fifth video channel\n(Enter D if done) ==========> ",
+      "\nEnter sixth video channel\n(Enter D if done) ==========> ",
+      ] 
+
     bands = ['a', 'b', 'c', 'e', 'f', 'r']
     channels = [str(x) for x in range(1,9)]
 
 
-                                        #first channel
-
-    while True:
-      
-      self.group[0] = input("\nEnter first VTX channel -OR-\nenter G to input entire group at once ==> ").lower()
-      
-         
-      if self.group[0] == 'g':
-        while True:
-          string_group = input('\nEnter channel group ======> ')
-          input_group_init = string_group.split(' ')
-          input_group = [x for x in input_group_init if x != '']
-
-          if len(input_group) < 2 or len(input_group) > 6:
-            print('Try again.')
-            continue
-
-          ok = True
-          for chan in input_group:
-            if not self.check_channel_input(chan, bands, channels):
-              ok = False
-              break
-          if not ok:
-            continue
-
-          self.group = input_group
-          return
-
-
-      elif self.check_channel_input(self.group[0], bands, channels):
-
-        break
-    
-                                         #second channel
-
-
-    while True:
-      
-      self.group[1] = input("\nEnter second video channel => ").lower()
-      
-      if self.check_channel_input(self.group[1], bands, channels):
-
-        break
-
-                                        #third channel
-
-
-    while True:
-      
-      self.group[2] = input("\nEnter third video channel\n(Enter D if done) ==========> ").lower()
-      
-      if self.group[2] == 'd':
-          self.group[2] = None
-          break
-
-      if self.check_channel_input(self.group[2], bands, channels):
-
-        break
-
-                                         #fourth channel
-
-
-    while True:
-      
-      if self.group[2] == None:
-      	break
-
-      self.group[3] = input("\nEnter fourth video channel\n(Enter D if done) ==========> ").lower()
-      
-      if self.group[3] == 'd':
-          self.group[3] = None
-          break
-
-      if self.check_channel_input(self.group[3], bands, channels):
-
-        break
-
-                                        #fifth channel
-
-
     while True:
 
-      if self.group[3] == None:
-      	break
-
-      self.group[4] = input("\nEnter fifth video channel\n(Enter D if done) ==========> ").lower()
+      self.group[ques_num] = input(questions[ques_num]).lower()
       
-      if self.group[4] == 'd':
-          self.group[4] = None
-          break
+      if ques_num == 0:
+        if self.group[0] == 'g':
+          while True:
+            string_group = input('\nEnter channel group ======> ')
+            input_group_init = string_group.split(' ')
+            input_group = [x for x in input_group_init if x != '']
 
-      if self.check_channel_input(self.group[4], bands, channels):
-        break
+            if len(input_group) < 2 or len(input_group) > 6:
+              print('\n-----Try again.-----')
+              continue
 
-                                     #sixth channel
+            ok = True
+            for chan in input_group:
+              if not self.check_channel_input(chan, bands, channels):
+                ok = False
+                break
+            if not ok:
+              continue
+
+            self.group = input_group
+            return False
 
 
-    while True:
-      
-      if self.group[4] == None:
-      	break
+      if ques_num in range(2,6):
+        if self.group[ques_num] == 'd':
+          for i in range(ques_num, 6):
+            self.group[i] = None
+          
+          return False
 
-      self.group[5] = input("\nEnter sixth video channel\n(Enter D if done) ==========> ").lower()
-      
-      if self.group[5] == 'd':
-          self.group[5] = None
-          break
-
-      if self.check_channel_input(self.group[5], bands, channels):
-        break
-
-    print('\n\n')
-
-  
+      if self.check_channel_input(self.group[ques_num], bands, channels):
+        return True
 
 
 
@@ -183,13 +124,15 @@ class FreqSet:
         return True
          
       else:
-        print("\nTry Again.\n")
+        print("\n-----Try Again.-----\n")
         return False
 
 
     except (ValueError, IndexError):
-      print("\nTry Again.\n")
+      print("\n-----Try Again.-----\n")
       return False
+
+
 
 
 
@@ -212,7 +155,6 @@ class FreqSet:
 
 
     return freq_bad
-
 
 
 
@@ -481,7 +423,7 @@ class FreqSet:
           
         if broadcast_factor:   
           score_alt = score_alt * broadcast_factor  # to reduce proportinal to close broadcast channels         
-
+          
         else:
           if printz:
             print("Minimum VTX\nchannel seperation  =========> %sMHz\n\n" % (closest_broadcast))
@@ -507,10 +449,6 @@ class FreqSet:
         else:
           score_alt = 100.0 * broadcast_factor
 
-        
-
-
-
 
 
     if printz:
@@ -525,9 +463,6 @@ channels): ==================> {score}
       print("\nTop Possible Score is 100\n\n\n\n\n\n\n")
     
     self.scores = [score_alt, score_alt_weighted, closest_broadcast]
-    #print(self.scores)
-
-
 
 
 
@@ -933,6 +868,8 @@ def factorial(n, limit=None):
 
     
 '''
+      
+
       try:
         
         if (self.group[1][0] in bands and self.group[1][1] in channels)\
@@ -950,4 +887,121 @@ def factorial(n, limit=None):
 
       except (ValueError, IndexError):
         print("\nTry Again.\n")
+'''
+
+'''
+    
+
+                                        #first channel
+
+    while True:
+      
+      self.group[0] = input("\nEnter first VTX channel -OR-\nenter G to input entire group at once ==> ").lower()
+      
+         
+      if self.group[0] == 'g':
+        while True:
+          string_group = input('\nEnter channel group ======> ')
+          input_group_init = string_group.split(' ')
+          input_group = [x for x in input_group_init if x != '']
+
+          if len(input_group) < 2 or len(input_group) > 6:
+            print('Try again.')
+            continue
+
+          ok = True
+          for chan in input_group:
+            if not self.check_channel_input(chan, bands, channels):
+              ok = False
+              break
+          if not ok:
+            continue
+
+          self.group = input_group
+          return
+
+
+      elif self.check_channel_input(self.group[0], bands, channels):
+
+        break
+    
+
+    while True:
+      
+      self.group[1] = input("\nEnter second video channel => ").lower()
+      
+      if self.check_channel_input(self.group[1], bands, channels):
+
+        break
+
+                                        #third channel
+
+
+    while True:
+      
+      self.group[2] = input("\nEnter third video channel\n(Enter D if done) ==========> ").lower()
+      
+      if self.group[2] == 'd':
+          self.group[2] = None
+          break
+
+      if self.check_channel_input(self.group[2], bands, channels):
+
+        break
+
+                                         #fourth channel
+
+
+    while True:
+      
+      if self.group[2] == None:
+        break
+
+      self.group[3] = input("\nEnter fourth video channel\n(Enter D if done) ==========> ").lower()
+      
+      if self.group[3] == 'd':
+          self.group[3] = None
+          break
+
+      if self.check_channel_input(self.group[3], bands, channels):
+
+        break
+
+                                        #fifth channel
+
+
+    while True:
+
+      if self.group[3] == None:
+        break
+
+      self.group[4] = input("\nEnter fifth video channel\n(Enter D if done) ==========> ").lower()
+      
+      if self.group[4] == 'd':
+          self.group[4] = None
+          break
+
+      if self.check_channel_input(self.group[4], bands, channels):
+        break
+
+
+
+
+
+
+    while True:
+      
+      if self.group[4] == None:
+        break
+
+      self.group[5] = input("\nEnter sixth video channel\n(Enter D if done) ==========> ").lower()
+      
+      if self.group[5] == 'd':
+          self.group[5] = None
+          break
+
+      if self.check_channel_input(self.group[5], bands, channels):
+        break
+
+    print('\n\n')
 '''
