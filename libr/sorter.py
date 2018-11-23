@@ -30,10 +30,10 @@ def quicksort(lst, start, end):
 	lst[pivot], lst[end] = lst[end], lst[pivot]
 	marker = start
 	for i in range(start,end):
-		if get_score(lst[i]) > get_score(pivot_value):
+		if get_score(lst[i], 0) > get_score(pivot_value, 0):
 			lst[marker], lst[i] = lst[i], lst[marker]
 			marker += 1
-		elif get_score(lst[i]) == get_score(pivot_value):
+		elif get_score(lst[i], 0) == get_score(pivot_value, 0):
 			if get_vtx_sep(lst[i]) > get_vtx_sep(pivot_value):
 				lst[marker], lst[i] = lst[i], lst[marker]
 				marker += 1
@@ -50,13 +50,11 @@ def quicksort(lst, start, end):
 
 
 
-def get_score(string):
+def get_score(string, score_to_get):
 
 	halves = string.split('   ')
 	scores = halves[0].split('  ')
-	score = scores[0]
-	#split = score.split('.')
-	#whole = split[0] + split[1]
+	score = scores[score_to_get]
 	
 	return float(score)
 
