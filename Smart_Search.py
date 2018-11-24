@@ -3,7 +3,7 @@ from time import sleep
 
 while True:
 	smart_lookup()
-	loop = input("\n-- Enter Q to quit Smart Search. Press Enter to continue: \n\n").lower()
+	loop = input("\n-- Enter Q to Quit Smart Search. Press Enter to continue: \n\n").lower()
 	if loop =='q':
 		sleep(.5)
 		break

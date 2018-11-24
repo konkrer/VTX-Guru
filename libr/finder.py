@@ -14,6 +14,8 @@ def smart_lookup(num_pilots=None, usa_only=None, group_to_find=None):
 	if not num_pilots:
 		print("""
 			
+
+			
 ===========================================================================
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 ===========================================================================
@@ -96,22 +98,19 @@ while ensuring as few as possible pilots need to change channels.
 
 			if ('f8' in freqy.group):
 				if ('f8' in freqy.group) and ('r7' in freqy.group):
-					print("** F8 and R7 are the same frequency, 5800 MHz.\n** Only enter one or the other. Two pilots cannot use the same frequency.\n\n")
+					print("** F8 and R7 are the same frequency, 5880 MHz.\n** Only enter one or the other. Two pilots cannot use the same frequency.\n\n")
 					sleep(3)
 					continue
 
 
 				else:				
 					entered_f8 = True
-					#f8_idx = freqy.group.index('f8')
-					#freqy.group.remove('f8')
-					#freqy.group.insert(f8_idx, 'r7')
 					
 
 			for freq in freqy.group:
 				if freq:
 					if freq[0] == 'c':
-						print('** All C band channels will be converted to R band. (i.e. C4 becomes R4) **\n\n')
+						print('** All C band channels will be converted to R band. (E.g. C4 becomes R4) **\n\n')
 						break
 
 			digit_list = freqy.convert_freq_abbreviations() # to make sure C channels are converted to R.
@@ -137,9 +136,15 @@ while ensuring as few as possible pilots need to change channels.
 			else:
 				break
 
-	studies = ['libr/studies/list3.txt', 'libr/studies/list4.txt', 'libr/studies/list5.txt', 'libr/studies/list6.txt']
+	studies = ['libr/studies/list3.txt', 
+	'libr/studies/list4.txt', 
+	'libr/studies/list5.txt', 
+	'libr/studies/list6.txt']
 	if usa_only:
-		studies = ['libr/studies/list3usa.txt', 'libr/studies/list4usa.txt', 'libr/studies/list5usa.txt', 'libr/studies/list6usa.txt']
+		studies = ['libr/studies/list3usa.txt', 
+		'libr/studies/list4usa.txt', 
+		'libr/studies/list5usa.txt', 
+		'libr/studies/list6usa.txt']
 
 	with open(studies[int(num_pilots) - 3]) as f:
 		group_list = f.readlines()
@@ -212,10 +217,6 @@ while ensuring as few as possible pilots need to change channels.
 				return
 		print('\n\n----------------------- End of list, back to top of list. -----------------------\n\n')
 
-		
-
-
-
 
 
 
@@ -226,3 +227,104 @@ def get_vtx_group(line):
 
 	return group
 
+
+
+
+def get_charts():
+
+	usa_only = False
+
+
+	print("""
+
+
+
+===========================================================================
+O-O|O-O|O-O|O-O|O-O|O-O|O-O|>CHARTS EXPLORER<|O-O|O-O|O-O|O-O|O-O|O-O|O-O|O
+===========================================================================
+
+			      ~ VTX Guru ~
+			     Charts Explorer
+
+
+
+
+
+** NOTE: Channels R7 and F8 are both the same frequency - 5880 MHz.
+         The charts only show 'R7' when refering to the 5880 MHz frequency.
+         """)
+
+	while True:
+		num_pilots = input("""
+
+
+-- Charts are organized by how many pilots will be flying at once.
+
+-- Enter number of pilots 
+-- (3 to 6) =====================> """)
+
+		num_pilots.strip(' ')
+		if (num_pilots=='3') or (num_pilots=='4') or (num_pilots=='5') or (num_pilots=='6'):
+			break
+		else:
+			print("---- Try again ----")
+
+
+	while True:
+		usa_only = input("""
+-- Should the chart include only 
+-- U.S. legal channels?
+-- (Enter Y or N) ===============> """).lower()
+
+		if usa_only == "y":
+			usa_only = True
+			break
+		if usa_only == 'n':
+			usa_only = False
+			break
+		else:
+			print("---- Try again ----")
+
+	studies = [
+	'libr/studies/markd_up/list3.txt', 
+	'libr/studies/markd_up/list4.txt', 
+	'libr/studies/markd_up/list5.txt', 
+	'libr/studies/markd_up/list6.txt']
+
+	if usa_only:
+		studies = ['libr/studies/markd_up/list3usa.txt', 
+		'libr/studies/markd_up/list4usa.txt', 
+		'libr/studies/markd_up/list5usa.txt', 
+		'libr/studies/markd_up/list6usa.txt']
+
+	f = open(studies[int(num_pilots) - 3])
+	first_line = f.readline()
+	second_line = f.readline()
+	third_line = f.readline()
+
+	enumerate_num = 1
+	print("\n\n\n\n")
+	while True:
+		
+		print('\n' + "     " + first_line  + second_line + "     " + third_line)
+		for i in range(50):
+			x = f.readline()
+			if (x == ""):
+				return
+			y = x.replace('100.0', '100 ')
+			if enumerate_num < 10:
+				print("{}.    ".format(enumerate_num) + y, end='')
+			elif enumerate_num < 100:
+				print("{}.   ".format(enumerate_num) + y, end='')
+			elif enumerate_num < 1000:
+				print("{}.  ".format(enumerate_num) + y, end='') 
+			else:
+				print("{}. ".format(enumerate_num) + y, end='')
+			enumerate_num +=1
+		more = input("\n\nPress Enter for more results. Press Q to Quit ====> ").lower()
+		more.strip(' ')
+		if more == 'q':
+				break
+		print('\n')
+			
+	f.close()

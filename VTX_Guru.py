@@ -4,50 +4,73 @@ from time import sleep
 while True:
 	
 	print("""\n\n\n\n
-=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|>GURU<|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|
-=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|>GURU<|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o
+=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 
 
-			       ~ VTX GURU ~
+			      ~ VTX GURU ~
 
-	 	     FPV MULTI PILOT VIDEO CLARITY TOOLS
-
-
+	 	    FPV MULTI PILOT VIDEO CLARITY TOOLS
 
 
--- 1. Smart Search - Find a low interference VTX channel group, working with
-                     the channels pilots are already on.
-
--- 2. IMD Analyzer - Analyzes entered 5 GHZ VTX channel group
-                     and produces video clarity score.
-
--- 3. Charts       - Look at charts of VTX groups that have a passing video
-                     clarity score. See what the best scoring groups are!                  
 
 
--- 4. About VTX GURU - How the scores are calculated. 
+-- 1. Smart Search   - Finds a low interference VTX channel group. 
+                       Works with the channels pilots are already on,
+                       so as few as possible pilots need to change channel.
+
+
+-- 2. IMD Ace        - Analyzes entered 5 GHZ VTX channel group
+                       and produces video clarity score.
+
+ 
+-- 3. Charts         - See charts of channel groups that have a passing video
+      Explorer         clarity score. See what the best scoring groups are!
+
+
+-- 4. Investigate    - Used to ivestigate all possible combinations of
+                       VTX channel groups. Produces a scored list, from 
+                       best to worst. (Use this if 40 channel or U.S. legal 
+                       channels only doesn't meet your local channel needs.)
+                                                           
+
+
+-- 5. About VTX GURU - How the scores are calculated. 
 		
 
 
 
 		""")
 
-	choice = input("-- Enter the number for the tool you'd like to use.\n\n-- Enter Q to quit VTX Guru. ==========> ").lower()
+	while True:
+		choice = input("-- Enter the number for the tool you'd like to use.\n\n-- Enter Q to Quit VTX Guru. ==========> ").lower().strip(' ')
+		
+		if (choice=='1') or (choice=='2') or (choice=='3') or (choice=='4') or (choice=='5') or (choice=='q'):
+			break
+		else:
+			sleep(.5)
+			print("\n\n-- Not a valid choice. Let's try again. --\n\n")
+			sleep(2)
 
 	if choice == '1':
 		sleep(.5)
 		exec(open('Smart_Search.py').read())
-	elif choice == '2':
+	if choice == '2':
 		sleep(.5)
 		exec(open('IMD_Analyzer.py').read())
-	elif choice == 'q':
+	if choice == '3':
+		sleep(.5)
+		exec(open('Charts.py').read())
+	if choice == '4':
+		sleep(.5)
+		exec(open('Investigate.py').read())
+	if choice == '5':
+		exec(open('Info.py').read())
+	if choice == 'q':
 		print('\n\n')
 		break
-	else:
-		sleep(1)
-		print("\n\n-- Not a valid choice. Let's try again. --\n\n")
-		sleep(1)
+	
 
 
 

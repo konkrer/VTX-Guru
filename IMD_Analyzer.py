@@ -20,7 +20,7 @@ while True:
   if export == "x":
     x.export(converted)
 
-  loop = input("\n-- Enter Q to quit IMD Analyzer. Press Enter to continue: \n\n").lower()
+  loop = input("\n-- Enter Q to Quit IMD Analyzer. Press Enter to continue: \n\n").lower()
   if loop =='q':
     sleep(.75)
     break

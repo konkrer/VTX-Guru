@@ -30,14 +30,17 @@ class FreqSet:
     if printz:
       print ("""
     
-============================================================================
-\/\/\/\/\/\/\/\/\/\/\/\/\/\/\>IMD Analyzer</\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-============================================================================
 
-                              ~ VTX Guru ~
-                              IMD Analyzer 
+    
+=============================================================================
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/>IMD ACE<\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+=============================================================================
 
-                    FPV VTX CHANNEL INTERFERENCE CHECKER
+
+                               ~ VTX Guru ~
+                               IMD Analyzer 
+
+                   FPV VTX CHANNEL INTERFERENCE CHECKER
 
 
     
@@ -71,6 +74,20 @@ class FreqSet:
       "\n-- Enter fourth video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter fifth video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter sixth video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter seventh video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter eigth video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter ninth video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter tenth video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter 11th video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter 12th video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter 13th video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter 14th video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter 15th video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter 16th video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter 17th video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter 18th video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter 19th video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter 20th video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter second video channel\n-- (Enter D if done) ==========> ",
       ] 
 
@@ -109,7 +126,7 @@ class FreqSet:
             return False
 
 
-      if ques_num in range(int(quit_on),6):
+      if ques_num >= int(quit_on):
         if answer == 'd':
           for i in range(ques_num, 6):
             self.group[i] = None
@@ -117,7 +134,10 @@ class FreqSet:
           return False
 
       if self.check_channel_input(answer, bands, channels):
-        self.group[ques_num] = answer
+        try:
+          self.group[ques_num] = answer
+        except IndexError:
+          self.group.append(answer)
         return True
 
 
@@ -533,22 +553,82 @@ class FreqSet:
 
   def investigate(self, score_limit=60):
 
-    
-    num_channels =  int(input("--How many in channel group to investigate? (3-6): "))
-    
-    if num_channels > 6 or num_channels < 3:
-      return
-    
-    usa_only = input("--USA only? (Enter Y or N): ").lower()
-    
-    if usa_only == 'y':
-      print('\n\n-*USA VTX CHANNELS ONLY CONFIRMED*-\n\n')
-      usa_only = True
-    else:
-      print('\n\n-WORLDWIDE VTX CHANNELS CONFIRMED-\n\n')
-      usa_only = False
+    extra_remove = False
+    print("""
 
-    self.output = input("--Filename to output data?: ")
+
+
+===========================================================================      
+??????????????????????????????????i????????????????????????????????????????      
+===========================================================================
+
+                             iNVESTIGATE
+
+
+
+
+
+** NOTE: Channels R7 and F8 are both the same frequency - 5880 MHz.
+         The output only shows 'R7' when refering to 5880 MHz.
+
+
+         """)
+    while True:
+      num_channels_raw =  input("\n\n-- How many in channel group to investigate? (3-6)=======> ")
+      num_channels = num_channels_raw.strip(' ')
+      if (num_channels == '3') or (num_channels == '4') or (num_channels == '5') or (num_channels == '6'):
+        break
+      else:
+        print("\n\n---- Try Again ----\n\n")
+    
+    while True:
+      usa_only_raw = input("\n\n--USA only? (Enter Y or N)=======> ").lower()
+      usa_only = usa_only_raw.strip(' ')
+      if usa_only == 'y':
+        print('\n\n** USA VTX CHANNELS ONLY CONFIRMED **\n\n')
+        usa_only = True
+        break
+      if usa_only == 'n':
+        print('\n\n---- 40 VTX CHANNELS CONFIRMED ----\n\n')
+        usa_only = False
+        break
+      else:
+        print("\n\n---- Try Again ----\n\n")
+      
+
+    if not usa_only:
+      while True:
+        extra_remove_raw = input("""
+-- Would you like to remove any frequencies from the 40 VTX channel set? --
+
+-- Enter Y for Yes or N for No =======> """).lower()
+        extra_remove = extra_remove_raw.strip(' ')
+        if (extra_remove == 'y'):
+          extra_remove = True
+          break
+        if (extra_remove == 'n'):
+          extra_remove = False
+          break
+        else:
+          print("\n\n---- Try Again ----\n\n")
+    
+    if extra_remove:
+      to_remove = FreqSet()
+      to_remove.get_input(False, 20, 1)
+      new_list =[]
+      
+      
+      if 'f8' in to_remove.group:
+        f8_idx = to_remove.group.index('f8')
+        to_remove.group[f8_idx] = 'r7'
+
+      for chan in to_remove.group:
+        if (chan not in new_list) and (chan != None):
+          new_list.append(chan)
+      to_remove.group = new_list
+      
+
+    self.output = input("-- Filename to output data?\n\n-- (E.g. something.txt): ")
 
     
 
@@ -563,9 +643,23 @@ class FreqSet:
     if usa_only:
       channels.remove('e4')
       channels.remove('e7')
-      channels.remove('e8')
+      channels.remove('e8') 
 
-    gen = combo_explor(channels, num_channels)
+    else:
+      if extra_remove:
+        for chan in to_remove.group:
+          try:
+            channels.remove(chan)
+          except ValueError:
+            pass
+    print("\n\nChannels that were removed ===> ", end=' ')
+    for chan in to_remove.group:
+      print(chan, end=' ')
+    print("\n")
+
+         
+
+    gen = combo_explor(channels, int(num_channels))
 
     coutner = 0
 
@@ -583,7 +677,7 @@ class FreqSet:
       converted = self.convert_freq_abbreviations()
       self.score(converted, False)
 
-      if num_channels > 4:
+      if int(num_channels) > 4:
         if self.scores[1] != None:
           if self.scores[1] >= score_limit:
             self.export(converted)
@@ -594,7 +688,7 @@ class FreqSet:
       
       coutner+=1
 
-    print("%s combinations checked!" % (coutner))
+    print("\n\n-- %s combinations checked!" % (coutner))
 
     
     
