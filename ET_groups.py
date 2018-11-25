@@ -19,7 +19,7 @@ print('==========================================================\n\n')
 
 
 print("------------ET6\n")
-x = FreqSet(['5645', '5685', '5760', '5805', '5905', '5945'])
+x = FreqSet([5645, 5685, 5760, 5805, 5905, 5945])
 freq_list = x.convert_freq_abbreviations()
 x.analyze_interference(freq_list)
 x.score(freq_list)

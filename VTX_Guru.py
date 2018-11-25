@@ -32,7 +32,7 @@ while True:
 -- 4. Investigate    - Used to ivestigate all possible combinations of
                        VTX channel groups. Produces a scored list, from 
                        best to worst. (Use this if 40 channel or U.S. legal 
-                       channels only doesn't meet your local channel needs.)
+                       channels only doesn't meet your channel needs.)
                                                            
 
 

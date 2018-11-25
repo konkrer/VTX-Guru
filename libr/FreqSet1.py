@@ -2,11 +2,13 @@
 
 """
 A class made to hold a frequency group of 5GHz FPV VTX channels,
-then analyze and/or score for IMD interference level.
+then analyze and/or score for IMD interference level. 
 
-Investigate method allows for investigating all possible combinations
-of channels in study group. Currently, only worldwide(40 chan) and USA only(37 chan)
-study groups available to chose. 
+Investigate method allows for scoring all possible combinations
+of 40 VTX channels in study group.  Only passing scores are output
+to file.  U.S. legal channels only option available; and selective removal of
+channels allow for almost all possible subsets of the 40 channel set to 
+be explored. (min 8 channel subset, i.e.one FPV VTX band)
 
 """
 
@@ -14,7 +16,7 @@ study groups available to chose.
 
 class FreqSet:
   
-  def __init__(self, lst=[None, None, None, None, None, None]):
+  def __init__(self, lst=[]):
     
     self.group = lst
     self.output = None
@@ -26,12 +28,12 @@ class FreqSet:
 
   def get_input(self, printz=True, channels=6, quit_on=2):
     
-
+    self.group = []
     if printz:
       print ("""
     
 
-    
+
 =============================================================================
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/>IMD ACE<\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 =============================================================================
@@ -88,6 +90,7 @@ class FreqSet:
       "\n-- Enter 18th video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter 19th video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter 20th video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter next video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter second video channel\n-- (Enter D if done) ==========> ",
       ] 
 
@@ -100,6 +103,8 @@ class FreqSet:
       if (ques_num == 1) and (quit_on == 1):
         answer = input(questions[-1]).lower().strip(' ')
 
+      elif (ques_num > 19):
+        answer = input(questions[-2]).lower().strip(' ')
       else:
         answer = input(questions[ques_num]).lower().strip(' ')
       
@@ -110,7 +115,7 @@ class FreqSet:
             input_group_init = string_group.split(' ')
             input_group = [x for x in input_group_init if x != '']
 
-            if len(input_group) < 2 or len(input_group) > 6:
+            if len(input_group) < 2 or len(input_group) > 32:
               print('\n-----Try again.-----')
               continue
 
@@ -127,17 +132,11 @@ class FreqSet:
 
 
       if ques_num >= int(quit_on):
-        if answer == 'd':
-          for i in range(ques_num, 6):
-            self.group[i] = None
-          
+        if answer == 'd':        
           return False
 
       if self.check_channel_input(answer, bands, channels):
-        try:
-          self.group[ques_num] = answer
-        except IndexError:
-          self.group.append(answer)
+        self.group.append(answer)
         return True
 
 
@@ -147,8 +146,6 @@ class FreqSet:
 
   def check_channel_input(self, chan_input, bands, channels):
     
-    
-    #chan_input = chan_input1.strip(' ')
 
     try:
         
@@ -300,16 +297,14 @@ class FreqSet:
         clean = dirty.strip('\n')
         converter[sliced_raw[0]] = clean
     
-    for chan in self.group:
-      
-      if chan != None:
+    for chan in self.group:    
         
-        if len(chan) == 2:
-          value = converter[chan]
-          converted.append(int(value))
+      if len(str(chan)) == 2:
+        value = converter[chan]
+        converted.append(int(value))
         
-        else:
-        	converted.append(int(chan))
+      else:
+        converted.append(int(chan))
 
     return converted
 
@@ -332,20 +327,15 @@ class FreqSet:
         converter[clean] = sliced_raw[0]
     
     for chan in self.group:
-      
-      if chan != None:
-        
-        if len(str(chan)) == 4:
-          if str(chan) in converter.keys():
-            value = converter[str(chan)]
-            converted.append(value)
-
-          else:
-            converted.append(chan)
-        
+          
+      if len(str(chan)) == 4:
+        if str(chan) in converter.keys():
+          value = converter[str(chan)]
+          converted.append(value)
         else:
-          converted.append(chan)
-
+          converted.append(chan)   
+      else:
+        converted.append(chan)
 
     return converted
 
@@ -383,8 +373,7 @@ class FreqSet:
 
       if seperation < 40:
         broadcast_close_times += 1
-        
-
+ 
 
 
     for sublst in bad_freq:
@@ -516,6 +505,7 @@ class FreqSet:
       
       abbreviations = self.convert_to_abbreviations()
       output_file = input("-- Name of output_file?")
+
       with open(output_file, "a") as f:
         f.write("%s  %s  %s   " % (round(self.scores[0], 2), self.scores[1], self.scores[2]))
         for chan in abbreviations:
@@ -531,10 +521,9 @@ class FreqSet:
 
     else:
 
-      group = [freq for freq in self.group if freq != None]
       with open(self.output, "a") as f:
         f.write("%.2f  %s  %s   " % (round(self.scores[0], 2), self.scores[1], self.scores[2]))
-        for chan in group:
+        for chan in self.group:
           f.write(str(chan) + " ",)
         f.write('-- ')
         for freq in converted:
@@ -574,15 +563,26 @@ class FreqSet:
 
          """)
     while True:
-      num_channels_raw =  input("\n\n-- How many in channel group to investigate? (3-6)=======> ")
+      num_channels_raw =  input("\n\n-- How many in channel group\n-- to investigate? (3-6) =======> ")
       num_channels = num_channels_raw.strip(' ')
-      if (num_channels == '3') or (num_channels == '4') or (num_channels == '5') or (num_channels == '6'):
-        break
+      
+      if (num_channels == '3') or (num_channels == '4')\
+         or (num_channels == '5') or (num_channels == '6')\
+         or (num_channels == '7'):
+        
+        if (num_channels == '7'):
+          print("\n\n\n**** YOU SELCETED 7 ......SNEAKY!!! GET READY TO WAIT FOR COMPLETION!\n**** CTRL C to force quit program.")  
+          print("**** SCORE LIMIT FOR CHANNEL GROUPS LOWERED TO 8.")
+          score_limit = 8
+          break
+          
+        else:
+          break
       else:
         print("\n\n---- Try Again ----\n\n")
     
     while True:
-      usa_only_raw = input("\n\n--USA only? (Enter Y or N)=======> ").lower()
+      usa_only_raw = input("\n\n--USA only? (Enter Y or N) =====> ").lower()
       usa_only = usa_only_raw.strip(' ')
       if usa_only == 'y':
         print('\n\n** USA VTX CHANNELS ONLY CONFIRMED **\n\n')
@@ -614,7 +614,7 @@ class FreqSet:
     
     if extra_remove:
       to_remove = FreqSet()
-      to_remove.get_input(False, 20, 1)
+      to_remove.get_input(False, 32, 1)
       new_list =[]
       
       
@@ -623,7 +623,7 @@ class FreqSet:
         to_remove.group[f8_idx] = 'r7'
 
       for chan in to_remove.group:
-        if (chan not in new_list) and (chan != None):
+        if (chan not in new_list):
           new_list.append(chan)
       to_remove.group = new_list
       
@@ -631,7 +631,6 @@ class FreqSet:
     self.output = input("-- Filename to output data?\n\n-- (E.g. something.txt): ")
 
     
-
     channels = []
 
     with open('libr/vtx_channel_guide_abrv.txt', 'r') as f:
@@ -652,12 +651,11 @@ class FreqSet:
             channels.remove(chan)
           except ValueError:
             pass
-    print("\n\nChannels that were removed ===> ", end=' ')
-    for chan in to_remove.group:
-      print(chan, end=' ')
-    print("\n")
+        print("\n\n\n** Channels that were removed\n   from study set ============> ", end=' ')
+        for chan in to_remove.group:
+          print(chan, end=' ')
+        print("\n")
 
-         
 
     gen = combo_explor(channels, int(num_channels))
 
@@ -677,7 +675,7 @@ class FreqSet:
       converted = self.convert_freq_abbreviations()
       self.score(converted, False)
 
-      if int(num_channels) > 4:
+      if int(num_channels) in [5,6]:
         if self.scores[1] != None:
           if self.scores[1] >= score_limit:
             self.export(converted)
@@ -697,7 +695,7 @@ class FreqSet:
 
    
 
-def combo_explor(lst, combo_of):
+def combo_explor(lst, combo_of, first_loop=True):
 
   first_count = 0
 
@@ -722,7 +720,8 @@ def combo_explor(lst, combo_of):
     while True:
 
       for i in range(len(end_shortened)):
-
+        if first_loop:
+          print("-- WORKING.....")
         if i == 0:
           first_count += 1
 
@@ -731,7 +730,7 @@ def combo_explor(lst, combo_of):
 
         option = end_shortened[i]
 
-        rest = combo_explor(lst[i+1:], combo_of-1)
+        rest = combo_explor(lst[i+1:], combo_of-1, False)
 
         while True:
 

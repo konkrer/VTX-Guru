@@ -15,7 +15,7 @@ def smart_lookup(num_pilots=None, usa_only=None, group_to_find=None):
 		print("""
 			
 
-			
+
 ===========================================================================
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 ===========================================================================
@@ -130,7 +130,9 @@ while ensuring as few as possible pilots need to change channels.
 			if usa_only:
 				if ('e4' in group_to_find) or ('e7' in group_to_find)\
 				or ('e8' in group_to_find):
+					sleep(.5)
 					print("-- E4, E7, and E8 cannot be looked for in U.S. only channels.--\n\n\n---- Try again. ----")
+					sleep(3)
 				else:
 					break
 			else:

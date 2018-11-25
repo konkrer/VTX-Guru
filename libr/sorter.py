@@ -9,8 +9,11 @@ def sort_list2(inputfile):
 
 	scored_groups_list = []
 
-	with open(inputfile, 'r') as f:
-		scored_groups_list = f.readlines()
+	try:
+		with open(inputfile, 'r') as f:
+			scored_groups_list = f.readlines()
+	except FileNotFoundError:
+		return 
 	
 	sys.setrecursionlimit(5000)
 	quicksort(scored_groups_list, 0, (len(scored_groups_list)-1))
