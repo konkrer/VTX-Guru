@@ -21,14 +21,21 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 ===========================================================================
 
 
-			      ~ VTX Guru ~
-			      Smart Search
+			     ~ VTX Guru ~
+			     Smart Search
 
-	   VTX Channel Group Recomendation Engine
+	         VTX Channel Group Recommendation Engine
 
 
-For finding a high clarity VTX channel group for 3 to 6 FPV pilots,
-while ensuring as few as possible pilots need to change channels.
+  Find a high clarity VTX channel group for 3 to 6 FPV pilots, while 
+  ensuring as few as possible pilots need to change channels. VTX Guru
+  will find the best rated group that contains as many of the given 
+  channels as possible.
+  
+  Only groups possessing a passing video clarity score are searched.
+  Scores range from 60 (worst) to 100 (best). If scores returned are
+  too low to your liking enter 'L' to look at a list of groups with one 
+  less matching channel.
 
 
 
@@ -51,7 +58,7 @@ while ensuring as few as possible pilots need to change channels.
 
 		while True:
 
-			usa_only = input('\n\n-- U.S. legal channels only?\n\n-- (Enter Y or N) ==> ').lower()
+			usa_only = input('-- U.S. legal channels only?\n\n-- (Enter Y or N) ==> ').lower()
 			if usa_only == 'y':
 				usa_only = True
 				print("\n\n------------------------ USA ONLY ------------------------\n")
@@ -60,9 +67,9 @@ while ensuring as few as possible pilots need to change channels.
 					break
 				else:
 					print("""
-  ** You selceted U.S. channels only and are looking for a 6 channel group. **
+  ** You selected U.S. channels only and are looking for a 6 channel group. **
   ** THERE ARE ONLY 8 CHANNEL GROUPS IN THIS SET WITH A PASSING SCORE!      **
-  ** Some U.S. VTX channels cannot be found at all in this list!            **
+  ** You may be better off looking at the Chart for 6 channel U.S. groups.  **
 
 """)
 					sleep(3)
@@ -78,17 +85,8 @@ while ensuring as few as possible pilots need to change channels.
 
 	if not group_to_find:
 		
-		print("""
--- Enter VTX channels that pilots are already on. -----
+		print("-- Enter VTX channels that pilots are already on. -----")
 
-   VTX Guru will find the best rated group that contains
-   as many of the given channels as possible. Only groups 
-   possessing a passing video clarity score are searched.
-
-   (If some pilots can change channels eaisly and some 
-   cannot, you may want to enter only the difficult to 
-   change channels.)  
-""")
 		while True:
 			group_to_find = []
 			freqy = FreqSet()
@@ -152,7 +150,8 @@ while ensuring as few as possible pilots need to change channels.
 		group_list = f.readlines()
 
 	max_matches = 0
-	max_matches_list = []
+	matches_lists = [[], [], [], [], [], []]
+	#max_matches_list = []
 
 	for i in range(len(group_list)):
 		matches = 0
@@ -160,11 +159,14 @@ while ensuring as few as possible pilots need to change channels.
 		for chan in group_to_find:
 			if chan in group:
 				matches += 1
+		if matches >= 1:
+			matches_lists[matches-1].append(i)
+
 		if matches > max_matches:
 			max_matches = matches
-			max_matches_list = [i]
-		elif matches == max_matches:
-			max_matches_list.append(i)
+			#max_matches_list = [i]
+		#elif matches == max_matches:
+			#max_matches_list.append(i)
 	
 	if max_matches == 0:
 		print("""
@@ -178,9 +180,9 @@ while ensuring as few as possible pilots need to change channels.
 
 				""")
 		return
-
+	top_again = max_matches
 	while True:
-		print("      -- Pilots on: ", end=' ')
+		print("           -- Pilots on: ", end=' ')
 		for chan in group_to_find:
 			if entered_f8:
 					if chan == 'r7':
@@ -190,9 +192,10 @@ while ensuring as few as possible pilots need to change channels.
 			else:
 				print(chan.upper(), end=' ')
 		print(" --")
-		print('\n\n      ---- VTX Guru suggestions: ----\n')
-		for i in range(len(max_matches_list)):
-			idx = max_matches_list[i]
+		print('\n\n           ---- VTX Guru suggestions: ----')
+		print("\n          Groups contain {} channel matches\n".format(max_matches))
+		for i in range(len(matches_lists[max_matches-1])):
+			idx = matches_lists[max_matches-1][i]
 			list_line = group_list[idx]
 			group = get_vtx_group(list_line)
 			print('\n\n {}.'.format(i+1), end='  ')
@@ -207,12 +210,21 @@ while ensuring as few as possible pilots need to change channels.
 					print(chan.upper(), end=' ')
 			if int(num_pilots) > 4:
 				score = get_score(list_line, 1)
-			if int(num_pilots) <=4:
+				print(" --   Weighted Video Clarity Score: {}".format(score))
+			elif int(num_pilots) <= 4:
 				score = get_score(list_line, 0)
-			print(" --   Video Clarity Score: {}".format(score))
+				print(" --   Video Clarity Score: {}".format(score))
 
 
-			nextz = input('\n\n-- Press Enter to see next best group in list.\n-- Enter D if done. ===> ').lower()
+			nextz = input('\n\n-- Press Enter to see next best group in list.\n-- Enter D if done.\n-- Enter L for list with less channel matches but better scores. ===> ').lower().strip(' ')
+			if nextz == 'l':
+				max_matches -= 1
+				if max_matches == 0:
+					max_matches = top_again
+					break
+				else:
+					break
+
 			if nextz == 'd':
 				
 				print("\n\n")
@@ -253,7 +265,7 @@ O-O|O-O|O-O|O-O|O-O|O-O|O-O|>CHARTS EXPLORER<|O-O|O-O|O-O|O-O|O-O|O-O|O-O|O
 
 
 ** NOTE: Channels R7 and F8 are both the same frequency - 5880 MHz.
-         The charts only show 'R7' when refering to the 5880 MHz frequency.
+         The charts only show 'R7' when referring to the 5880 MHz frequency.
          """)
 
 	while True:
@@ -330,3 +342,10 @@ O-O|O-O|O-O|O-O|O-O|O-O|O-O|>CHARTS EXPLORER<|O-O|O-O|O-O|O-O|O-O|O-O|O-O|O
 		print('\n')
 			
 	f.close()
+
+
+'''
+If some pilots can change channels eaisly and some cannot, you may 
+  want to enter only the difficult to change channels.
+
+'''	

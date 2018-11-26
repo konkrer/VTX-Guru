@@ -4,14 +4,14 @@ from time import sleep
 while True:
 	
 	print("""\n\n\n\n
-=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|>GURU<|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o
-=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|>GURU<|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o|o7o
+=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 
 
-			      ~ VTX GURU ~
+			              ~ VTX GURU ~
 
-	 	    FPV MULTI PILOT VIDEO CLARITY TOOLS
+	 	            FPV MULTI PILOT VIDEO CLARITY TOOLS
 
 
 
@@ -66,7 +66,7 @@ while True:
 		sleep(.5)
 		exec(open('Investigate.py').read())
 	if choice == '5':
-		exec(open('Info.py').read())
+		exec(open('libr/Info.py').read())
 	if choice == 'q':
 		print('\n\n')
 		break

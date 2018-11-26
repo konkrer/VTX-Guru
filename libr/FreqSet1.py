@@ -77,7 +77,7 @@ class FreqSet:
       "\n-- Enter fifth video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter sixth video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter seventh video channel\n-- (Enter D if done) ==========> ",
-      "\n-- Enter eigth video channel\n-- (Enter D if done) ==========> ",
+      "\n-- Enter eighth video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter ninth video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter tenth video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter 11th video channel\n-- (Enter D if done) ==========> ",
@@ -257,7 +257,7 @@ class FreqSet:
       
 
     elif bad_match == 0 and bad_close > 0:
-      print("                   -------ANALYSIS-------\n\n 		     IMD problems likley!\n 	   IMD within 10MHz of at least one channel.")
+      print("                   -------ANALYSIS-------\n\n 		     IMD problems likely!\n 	   IMD within 10MHz of at least one channel.")
 
     
     elif bad_match > 0:
@@ -373,6 +373,7 @@ class FreqSet:
 
       if seperation < 40:
         broadcast_close_times += 1
+
  
 
 
@@ -417,7 +418,7 @@ class FreqSet:
         if closest_broadcast <= 27:
           print(" *****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast))
         else:
-          print(" Minimum VTX\n channel seperation  =========> %sMHz\n\n" % (closest_broadcast))
+          print(" Minimum VTX\n channel separation  =========> %sMHz\n\n" % (closest_broadcast))
     
     elif closest_broadcast <= 27:
       score_alt = 0
@@ -434,7 +435,7 @@ class FreqSet:
 
         else:
           if printz:
-            print(" Minimum VTX\n channel seperation  =========> %sMHz\n(Channels getting close!)\n\n" % (closest_broadcast))
+            print(" Minimum VTX\n channel separation  =========> %sMHz\n(Channels getting close!)\n\n" % (closest_broadcast))
             
         broad_score = (40 - closest_broadcast)
         
@@ -448,15 +449,15 @@ class FreqSet:
       if divide_by != 0:
 
         score_alt =  100 - ((((float(score_total) /divide_by) ** .5) * 3) * .952)               
-        score_alt = score_alt * (1 -(IMD_close_to_chan / 30))  # to reduce proportinal to close IMD channels
+        score_alt = score_alt * (1 - (IMD_close_to_chan / 30))  # to reduce proportional to close IMD channels
         
           
         if broadcast_factor:   
-          score_alt = score_alt * broadcast_factor  # to reduce proportinal to close broadcast channels         
+          score_alt = score_alt * broadcast_factor  # to reduce proportional to close broadcast channels         
           
         else:
           if printz:
-            print(" Minimum VTX\n channel seperation  =========> %sMHz\n\n" % (closest_broadcast))
+            print(" Minimum VTX\n channel separation  =========> %sMHz\n\n" % (closest_broadcast))
         
         
         if len(group) == 6:
@@ -474,7 +475,7 @@ class FreqSet:
         if broadcast_factor == None:
           score_alt = 100.0
           if printz:
-            print(" Minimum VTX\n channel seperation  =========> %sMHz\n\n" % (closest_broadcast))
+            print(" Minimum VTX\n channel separation  =========> %sMHz\n\n" % (closest_broadcast))
         
         else:
           score_alt = 100.0 * broadcast_factor
@@ -558,7 +559,7 @@ class FreqSet:
 
 
 ** NOTE: Channels R7 and F8 are both the same frequency - 5880 MHz.
-         The output only shows 'R7' when refering to 5880 MHz.
+         The output only shows 'R7' when referring to 5880 MHz.
 
 
          """)
@@ -656,7 +657,7 @@ class FreqSet:
           print(chan, end=' ')
         print("\n")
 
-
+    print("\n")
     gen = combo_explor(channels, int(num_channels))
 
     coutner = 0
@@ -686,7 +687,7 @@ class FreqSet:
       
       coutner+=1
 
-    print("\n\n-- %s combinations checked!" % (coutner))
+    print("\n\n-- %s Combinations checked!" % (coutner))
 
     
     
