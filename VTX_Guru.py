@@ -1,5 +1,8 @@
 from time import sleep
 
+"""
+Run this script to run the main application.
+"""
 
 while True:
 	
