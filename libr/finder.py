@@ -10,6 +10,7 @@ from time import sleep
 def smart_lookup(num_pilots=None, usa_only=None, group_to_find=None):
 
 	entered_f8 = False
+	E_extra_max = False
 
 	if not num_pilots:
 		print("""
@@ -41,7 +42,6 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 		
 -- Enter number of pilots that will be flying at once.
-
 """)
 		while True:
 
@@ -61,7 +61,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 			usa_only = input('-- U.S. legal channels only?\n\n-- (Enter Y or N) ==> ').lower()
 			if usa_only == 'y':
 				usa_only = True
-				print("\n\n------------------------ USA ONLY ------------------------\n")
+				print("\n\n------------------------ USA ONLY Search ------------------------\n")
 				if int(num_pilots) != 6:
 					
 					break
@@ -78,14 +78,24 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 			if usa_only == 'n':
 				usa_only = False
-				print("\n\n----------------- 40 Channel ---------------------------\n")
-				break
-			print("\n---- Try again. ----")
+				print("\n\n----------------- 40 Channel Search ---------------------------\n")
+				E_extra_max = input("\n-- Do at least 2 pilots have a 40 channel VTX?\n-- Enter Y or N =========> ").lower().strip(" ")
+				if E_extra_max == 'y':
+					E_extra_max = False
+					break
+				if E_extra_max == "n":
+					E_extra_max == True		
+					break
+					
+			print("\n---- Try again. ----\n")
+
+
+	
 
 
 	if not group_to_find:
 		
-		print("-- Enter VTX channels that pilots are already on. -----")
+		print("\n-- Enter VTX channels that pilots are already on. -----")
 
 		while True:
 			group_to_find = []
@@ -151,22 +161,30 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 	max_matches = 0
 	matches_lists = [[], [], [], [], [], []]
-	#max_matches_list = []
+	E_extra_list = ['e4', 'e7', 'e8']
+	
 
 	for i in range(len(group_list)):
 		matches = 0
+		ex_match = 0
 		group = get_vtx_group(group_list[i])
+		
+		if E_extra_max:
+			for extra in E_extra_list:
+				if extra in group:
+					ex_match += 1
+			if ex_match > 1:
+				continue
+		
 		for chan in group_to_find:
 			if chan in group:
 				matches += 1
 		if matches >= 1:
-			matches_lists[matches-1].append(i)
+			for z in range(1, matches+1):
+				matches_lists[z - 1].append(i)
 
 		if matches > max_matches:
 			max_matches = matches
-			#max_matches_list = [i]
-		#elif matches == max_matches:
-			#max_matches_list.append(i)
 	
 	if max_matches == 0:
 		print("""
@@ -182,7 +200,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 		return
 	top_again = max_matches
 	while True:
-		print("           -- Pilots on: ", end=' ')
+		print("                   -- Pilots on: ", end=' ')
 		for chan in group_to_find:
 			if entered_f8:
 					if chan == 'r7':
@@ -192,8 +210,8 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 			else:
 				print(chan.upper(), end=' ')
 		print(" --")
-		print('\n\n           ---- VTX Guru suggestions: ----')
-		print("\n          Groups contain {} channel matches\n".format(max_matches))
+		print('\n\n                   ---- VTX Guru suggestions: ----')
+		print("\n                   Groups contain {} channel matches\n".format(max_matches))
 		for i in range(len(matches_lists[max_matches-1])):
 			idx = matches_lists[max_matches-1][i]
 			list_line = group_list[idx]
@@ -229,7 +247,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 				
 				print("\n\n")
 				return
-		print('\n\n----------------------- End of list, back to top of list. -----------------------\n\n')
+		print('\n\n---------------------------- End of list. -----------------------------\n\n')
 
 
 

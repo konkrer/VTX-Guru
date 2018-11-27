@@ -218,19 +218,19 @@ class FreqSet:
           for x in sublst:
             diff = abs(x - int(group[i]))
             if diff <20 and diff >= 10:
-              print("\nWarning: IMD on %s is quite close to %s (%s MHz)" % (x, group[i], diff))
+              print("\n   Warning: IMD on %s is quite close to %s (%s MHz)" % (x, group[i], diff))
               close += 1
 
             elif diff < 10:
-              print("\nWarning: IMD on %s is very close to %s (%s MHz)" % (x, group[i], diff))
+              print("\n   Warning: IMD on %s is very close to %s (%s MHz)" % (x, group[i], diff))
               bad_close += 1
 
             elif  diff < 35:
-              print("\nIMD on %s is close to %s (%s MHz)" % (x, group[i], diff))
+              print("\n   IMD on %s is close to %s (%s MHz)" % (x, group[i], diff))
               near += 1 
 
         elif int(group[i]) in sublst:
-          print("\n**Warning %s will have terrible interference! IMD exact match to VTX channel!**" % (group[i]))
+          print("\n   **Warning %s will have terrible interference! IMD exact match to VTX channel!**" % (group[i]))
           bad_match += 1
     if (close == 0) and (bad_close ==  0) and (near == 0) and (bad_match) == 0:
      print('                            --- NONE ---')  
@@ -277,7 +277,7 @@ class FreqSet:
     for chan in converted:
       print (chan, end='   ')
 
-    print("\n\n\n\n\n")
+    print("\n\n\n")
 
 
 
@@ -356,7 +356,7 @@ class FreqSet:
     broadcast_factor = None
     score_alt = None
     score_alt_weighted = None
-
+    IMD_score = None
     
 
     sorted_group = sorted(group, reverse=True)
@@ -405,25 +405,25 @@ class FreqSet:
 
     ratio = (IMD_close_to_chan / len(group))
 
-    if printz:
-      print(" Number of Problem \n IMD frequencies: ============> " + str(divide_by) + "\n\n")
-      print(" Times problem IMD freq \n is close to VTX channel: ====> " + str(IMD_close_to_chan) + "\n\n")
-      print(" Problem IMD close / Channels \n ratio is: ===================> " + str(round(ratio, 1)) + "\n\n")
-      print(" Minimum Problem IMD\n frequency seperation\n to VTX channel: =============> " + str(closest_imd) + " MHz\n (*within 35Mhz)\n\n")
+    if printz: 
+      print(" Number of Problem \n IMD frequencies: ============> " + str(divide_by) + "\n")
+      print(" Times problem IMD freq \n is close to VTX channel: ====> " + str(IMD_close_to_chan) + "\n")
+      #print(" Problem IMD close / Channels \n ratio is: ===================> " + str(round(ratio, 1)) + "\n")
+      print(" Minimum Problem IMD\n frequency seperation\n to VTX channel: =============> " + str(closest_imd) + " MHz\n")
 
     
     if closest_imd == 0:
       score_alt = 0
       if printz:
         if closest_broadcast <= 27:
-          print(" *****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast))
+          print(" *****VTX channels too close!!! %s MHz apart.*****\n" % (closest_broadcast))
         else:
-          print(" Minimum VTX\n channel separation  =========> %sMHz\n\n" % (closest_broadcast))
+          print(" Minimum VTX\n channel separation  =========> %sMHz\n" % (closest_broadcast))
     
     elif closest_broadcast <= 27:
       score_alt = 0
       if printz:
-        print(" *****VTX channels too close!!! %s MHz apart.*****\n\n" % (closest_broadcast)) 
+        print(" *****VTX channels too close!!! %s MHz apart.*****\n" % (closest_broadcast)) 
     
     else:
 
@@ -431,11 +431,11 @@ class FreqSet:
            
         if closest_broadcast < 35:
           if printz:
-             print(" ***VTX channels close! %s MHz apart.***\n\n" % (closest_broadcast))
+             print(" ***VTX channels close! %s MHz apart.***\n" % (closest_broadcast))
 
         else:
           if printz:
-            print(" Minimum VTX\n channel separation  =========> %sMHz\n(Channels getting close!)\n\n" % (closest_broadcast))
+            print(" Minimum VTX\n channel separation  =========> %sMHz\n (Channels getting close!)\n" % (closest_broadcast))
             
         broad_score = (40 - closest_broadcast)
         
@@ -448,12 +448,12 @@ class FreqSet:
 
       if divide_by != 0:
 
-        score_alt =  100 - ((((float(score_total) /divide_by) ** .5) * 3) * .952)               
-        score_alt = score_alt * (1 - (IMD_close_to_chan / 30))  # to reduce proportional to close IMD channels
-        
+        score_alt =  100 - (((float(score_total) /divide_by) ** .5) * 2.857142857)             
+        score_alt *= (1 - (IMD_close_to_chan / 30))  # to reduce proportional to close IMD channels
+        IMD_score = score_alt
           
         if broadcast_factor:   
-          score_alt = score_alt * broadcast_factor  # to reduce proportional to close broadcast channels         
+          score_alt *= broadcast_factor  # to reduce proportional to close broadcast channels         
           
         else:
           if printz:
@@ -483,7 +483,9 @@ class FreqSet:
 
 
     if printz:
-      print(" Video Clarity Score: ========> {:.2f}\n".format(round(score_alt, 2)))
+      if IMD_score != None:
+        print(" IMD Score: ==================> {:.2f}\n".format(round(IMD_score, 2)))
+      print(" Video Clarity Score: ========> {:.2f}".format(round(score_alt, 2)))
       if score_alt_weighted:
         print("""
  Weighted Video Clarity Score
@@ -491,7 +493,7 @@ class FreqSet:
  channels): ==================> {score}
         """.format(number=len(group), score=score_alt_weighted))
  
-      print("\n Top Possible Score is 100\n\n\n\n\n\n\n")
+      print("\n Top Possible Score is 100\n\n\n\n")
     
     self.scores = [score_alt, score_alt_weighted, closest_broadcast]
 
@@ -551,8 +553,8 @@ class FreqSet:
 ===========================================================================      
 ??????????????????????????????????i????????????????????????????????????????      
 ===========================================================================
-
-                             iNVESTIGATE
+                      
+                            EZ iNVESTIGATE
 
 
 

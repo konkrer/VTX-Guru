@@ -16,7 +16,7 @@ while True:
 
 
 
--- 1. Smart Search   - Finds a low interference VTX channel group. 
+-- 1. Smart Search   - Find a high clarity VTX channel group for 3 to 6 pilots. 
                        Works with the channels pilots are already on,
                        so as few as possible pilots need to change channel.
 
@@ -25,11 +25,11 @@ while True:
                        and produces video clarity score.
 
  
--- 3. Charts         - See charts of channel groups that have a passing video
+-- 3. Charts         - See charts of channel groups  possessing a passing video
       Explorer         clarity score. See what the best scoring groups are!
 
 
--- 4. Investigate    - Used to ivestigate all possible combinations of
+-- 4. EZ Investigate - Used to investigate all possible combinations of
                        VTX channel groups. Produces a scored list, from 
                        best to worst. (Use this if 40 channel or U.S. legal 
                        channels only doesn't meet your channel needs.)
