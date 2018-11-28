@@ -1,8 +1,5 @@
 from time import sleep
 
-"""
-Run this script to run the main application.
-"""
 
 while True:
 	
@@ -39,7 +36,10 @@ while True:
                                                            
 
 
--- 5. About VTX GURU - How the scores are calculated. 
+-- 5. What is IMD?   - IMD and why it matters for FPV pilots.
+
+
+-- 6. About VTX GURU - How the scores are calculated. 
 		
 
 
@@ -49,7 +49,7 @@ while True:
 	while True:
 		choice = input("-- Enter the number for the tool you'd like to use.\n\n-- Enter Q to Quit VTX Guru. ==========> ").lower().strip(' ')
 		
-		if (choice=='1') or (choice=='2') or (choice=='3') or (choice=='4') or (choice=='5') or (choice=='q'):
+		if (choice=='1') or (choice=='2') or (choice=='3') or (choice=='4') or (choice=='5') or (choice=='6') or (choice=='q'):
 			break
 		else:
 			sleep(.5)
@@ -69,6 +69,8 @@ while True:
 		sleep(.5)
 		exec(open('Investigate.py').read())
 	if choice == '5':
+		exec(open('libr/Info2.py').read())
+	if choice == '6':
 		exec(open('libr/Info.py').read())
 	if choice == 'q':
 		print('\n\n')
