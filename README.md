@@ -115,12 +115,12 @@
 
 	One way to observe the current adjustments being made by broadcast factor is to open two
 	instances of VTX Guru - one opened to Charts Explorer and the other opened to IMD Ace. 
-	Find in a chart a group that has a VTX separation of less than 40 and that also has a group
-	just above it with a higher score and a VTX separation of 40 or more. Copy that first group 
-	and paste it into IMD Ace, group entry mode, analyze it. Repeat this for the group just 
-	above. You should be able to see that the group with less VTX channel separation has a 
-	slightly better IMD Score, but it's Video Clarity Score has been lowered past the above 
-	group because of the broadcast factor.
+	Find in a chart a group that has a VTX separation of less than 40, which also has a group
+	just above it with: 1. a higher score (but not score 100) and 2. a VTX separation of 40 or more. 
+	Copy that first group and paste it into IMD Ace, group entry mode, analyze it. Repeat this 
+	for the group just above. You should be able to see that the group with less VTX channel 
+	separation has a slightly better IMD Score, but it's Video Clarity Score has been lowered 
+	past the above group because of the broadcast factor.
 
 	Also, the reducing factor that is used to calculate the IMD Score is a major candidate to 
 	be adjusted; to alter how much the IMD score diminishes with additional IMD_close_to_chan 
