@@ -451,9 +451,10 @@ class FreqSet:
         score_alt =  100 - (((float(score_total) /divide_by) ** .5) * 2.857142857)             
         score_alt *= (1 - (IMD_close_to_chan / 30))  # to reduce proportional to close IMD channels
         IMD_score = score_alt
-          
+        
         if broadcast_factor:   
-          score_alt *= broadcast_factor  # to reduce proportional to close broadcast channels         
+          score_alt *= broadcast_factor  # to reduce proportional to close broadcast channels
+                 
           
         else:
           if printz:
@@ -470,8 +471,11 @@ class FreqSet:
           
           # compress range of 5 group scores so when top scoring group (80) becomes 100 (+20) IMD5 now scores 62.3 (non-lowband groups)
           if score_alt < 80:
-            score_alt =  ((80 - score_alt) / 6.09) + score_alt
-          score_alt_weighted = round((score_alt + 20), 1) 
+            compressd =  ((80 - score_alt) / 6.09) + score_alt
+          else:
+            compressd = score_alt
+            
+          score_alt_weighted = round((compressd + 20), 1) 
           
 
       else:
