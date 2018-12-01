@@ -89,20 +89,26 @@
 
 	WEIGHTED SCORE
 	--------------
-	Additionally, 5 and 6 channel groups cannot score perfect 100 scores. So to make things 
-	easier the weighted scoring for 5 and 6 channel groups was created. With weighted scoring 
-	the "best in class" group(s) gets a weighted score of 100. The seeming least good of 
-	previously recommended groups (IMD5 & IMD6) both get a score of 62.3 weighted. The 
-	Video Clarity Score is scaled appropriately to achieve this result.
+	Additionally, 5 and 6 channel groups (comprised from 40 channel set) cannot score perfect 
+	100 scores. So to make things easier the weighted scoring for 5 and 6 channel groups was 
+	created. With weighted scoring 	the "best in class" 40 channel group gets a weighted score 
+	of 100. The seeming least good of previously recommended 40 channel groups (IMD5 & IMD6) 
+	both get a score of 62.3 weighted. The Video Clarity Score is scaled appropriately to 
+	achieve this result.
 
 	With weighted scoring we can call 62.3  (or slightly below at 60, as I have done)
 	the fail point. So all scores above 60 are "Pass". It is these groups with Pass scores 
 	that compromise	the database searched in Smart Search and shown in Charts. 
 
-	With 3 and 4 channel groups, the same above 60 score = Pass method is used, however the 
-	unweighted Video Clarity Score is used. In this case to judge from sixty and above 
-	is more arbitrary; it's done for consistency of the above 60 pass logic and ensures 
-	sufficient entries for Smart Search to search.
+	With 3 and 4 channel groups, and with 5 channel groups with lowband, the same above 
+	60 score = Pass method is used, however the unweighted Video Clarity Score is used. In this
+	case, to judge from sixty and above is more arbitrary; it's done for consistency of the above 
+	60 pass logic and ensures sufficient entries for Smart Search to search.
+
+	With 6 channel groups with lowband - weighted scores of 80 and above populate the pass
+	list. This is done to match the 5 channel with lowband list, who's lowest passing group
+	has a weighted score of 80. This way when recomending lowband groups, the groups recommended
+	will be either better than or very good when compared to non-lowband 5 & 6 groups.
 
 
 
@@ -116,11 +122,11 @@
 	One way to observe the current adjustments being made by broadcast factor is to open two
 	instances of VTX Guru - one opened to Charts Explorer and the other opened to IMD Ace. 
 	Find in a chart a group that has a VTX separation of less than 40, which also has a group
-	just above it with: 1. a higher score (but not score 100) and 2. a VTX separation of 40 or more. 
-	Copy that first group and paste it into IMD Ace, group entry mode, analyze it. Repeat this 
-	for the group just above. You should be able to see that the group with less VTX channel 
-	separation has a slightly better IMD Score, but it's Video Clarity Score has been lowered 
-	past the above group because of the broadcast factor.
+	just above it with - 1. a higher score (but not score 100) and 2. a VTX separation of 40 or 
+	more. Copy and paste that first group into IMD Ace and analyze it. Repeat this for the group 
+	just above. You should be able to see that the group with less VTX channel separation has 
+	a slightly better IMD Score, but it's Video Clarity Score has been lowered past the above 
+	group because of the broadcast factor.
 
 	Also, the reducing factor that is used to calculate the IMD Score is a major candidate to 
 	be adjusted; to alter how much the IMD score diminishes with additional IMD_close_to_chan 

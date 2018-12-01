@@ -57,9 +57,15 @@ def get_score(string, score_to_get):
 
 	halves = string.split('   ')
 	scores = halves[0].split('  ')
-	score = scores[score_to_get]
+	score_string = scores[score_to_get]
+	try:
+		score = float(score_string)
+
+	except ValueError:
+		return False
+
 	
-	return float(score)
+	return score
 
 
 

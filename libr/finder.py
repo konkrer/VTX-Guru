@@ -10,7 +10,9 @@ from time import sleep
 def smart_lookup(num_pilots=None, usa_only=None, group_to_find=None):
 
 	entered_f8 = False
-	E_extra_max = False
+	E_extra_max = None
+	add_lowband = False
+	L_max = False
 
 	if not num_pilots:
 		print("""
@@ -58,18 +60,29 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 		while True:
 
+			E_extra_max = None
+			L_max = False
+			add_lowband = False
+
 			usa_only = input('-- U.S. legal channels only?\n\n-- (Enter Y or N) ==> ').lower()
 			if usa_only == 'y':
 				usa_only = True
 				print("\n\n------------------------ USA ONLY Search ------------------------\n")
-				if int(num_pilots) != 6:
-					
+				
+
+				if int(num_pilots) < 5:		
 					break
+				elif int(num_pilots) == 5:
+					print("** Top scoring USA 5 channel group has weighted score of  84.0. **\n\n")
+					sleep(1)
+					break
+				
 				else:
 					print("""
   ** You selected U.S. channels only and are looking for a 6 channel group. **
   ** THERE ARE ONLY 8 CHANNEL GROUPS IN THIS SET WITH A PASSING SCORE!      **
   ** You may be better off looking at the Chart for 6 channel U.S. groups.  **
+  ** Top scoring USA 6 channel group has weighted score of  67.0.           **
 
 """)
 					sleep(3)
@@ -79,14 +92,46 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 			if usa_only == 'n':
 				usa_only = False
 				print("\n\n----------------- 40 Channel Search ---------------------------\n")
-				E_extra_max = input("\n-- Do at least 2 pilots have a 40 channel VTX?\n-- Enter Y or N =========> ").lower().strip(" ")
-				if E_extra_max == 'y':
-					E_extra_max = False
-					break
-				if E_extra_max == "n":
-					E_extra_max == True		
-					break
+				add_lowband = input("\n-- Would you like to include lowband channels?\n-- (Enter Y or N) =========> ").lower().strip(" ")
+				if add_lowband == 'n':
+					add_lowband = False
+					E_extra_max = input("\n-- Do at least 2 pilots have a 40 channel VTX?\n-- (Enter Y or N) =========> ").lower().strip(" ")
+					if E_extra_max == 'y':
+						E_extra_max = None
+						break
+					if E_extra_max == "n":
+						E_extra_max = 1		
+						break
+
+				elif add_lowband == 'y':
+					add_lowband = True
+
+					L_max = input("\n-- How many pilots have a lowband VTX?\n-- (1-6) =========> ").strip(" ")
+					if (L_max == '1') or (L_max == '2')\
+					or (L_max == '3') or (L_max == '4')\
+					or (L_max == '5') or (L_max == '6'):
+						pass
+
+					else:
+					  print("\n---- Try again. ----\n")
+					  continue
+
+					E_extra_max = input("\n-- Do at least 2 pilots have a 40 channel VTX?\n-- Enter (Y or N) =========> ").lower().strip(" ")
+					if E_extra_max == 'y':
+						E_extra_max = None
+						break
+						
+					elif E_extra_max == "n":
+						E_extra_max = input("\n-- How many pilots have 40 channel VTX's? (0-1)  ===> ").strip(" ")		
 					
+						if E_extra_max == '1':
+							E_extra_max = 1
+							break
+									
+						elif E_extra_max == '0':
+							E_extra_max = 0
+							break
+							
 			print("\n---- Try again. ----\n")
 
 
@@ -98,6 +143,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 		print("\n-- Enter VTX channels that pilots are already on. -----")
 
 		while True:
+			entered_f8 = False
 			group_to_find = []
 			freqy = FreqSet()
 			freqy.get_input(False, num_pilots, 1)
@@ -109,7 +155,6 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 					print("** F8 and R7 are the same frequency, 5880 MHz.\n** Only enter one or the other. Two pilots cannot use the same frequency.\n\n")
 					sleep(3)
 					continue
-
 
 				else:				
 					entered_f8 = True
@@ -135,11 +180,11 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 			
 			#print(group_to_find) # -----------debug
 			
-			if usa_only:
+			if usa_only or (E_extra_max == 0):
 				if ('e4' in group_to_find) or ('e7' in group_to_find)\
 				or ('e8' in group_to_find):
 					sleep(.5)
-					print("-- E4, E7, and E8 cannot be looked for in U.S. only channels.--\n\n\n---- Try again. ----")
+					print("-- E4, E7, and E8 cannot be looked for in U.S. only channels. (no 40 chan VTX's) --\n\n\n---- Try again. ----")
 					sleep(3)
 				else:
 					break
@@ -150,11 +195,18 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	'libr/studies/list4.txt', 
 	'libr/studies/list5.txt', 
 	'libr/studies/list6.txt']
+
 	if usa_only:
 		studies = ['libr/studies/list3usa.txt', 
 		'libr/studies/list4usa.txt', 
 		'libr/studies/list5usa.txt', 
 		'libr/studies/list6usa.txt']
+
+	if add_lowband:
+		studies = ['libr/studies/list3low.txt', 
+		'libr/studies/list4low.txt', 
+		'libr/studies/list5low.txt', 
+		'libr/studies/list6low.txt']
 
 	with open(studies[int(num_pilots) - 3]) as f:
 		group_list = f.readlines()
@@ -162,18 +214,28 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	max_matches = 0
 	matches_lists = [[], [], [], [], [], []]
 	E_extra_list = ['e4', 'e7', 'e8']
-	
+	L_list = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7', 'l8']
 
 	for i in range(len(group_list)):
+		
 		matches = 0
 		ex_match = 0
+		L_match = 0
 		group = get_vtx_group(group_list[i])
 		
-		if E_extra_max:
+		#print(E_extra_max)
+		if E_extra_max != None:
 			for extra in E_extra_list:
 				if extra in group:
 					ex_match += 1
-			if ex_match > 1:
+			if ex_match > E_extra_max:			
+				continue
+		
+		if L_max:
+			for chan in L_list:
+				if chan in group:
+					L_match += 1
+			if L_match > int(L_max):			
 				continue
 		
 		for chan in group_to_find:
@@ -192,12 +254,13 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
 ** You may just be searching U.S. legal channels for a 6 channel group 
-     -or-
+     -or possibly-
 ** Make sure to search for common VTX channels, not random frequencies.
 
 
 				""")
 		return
+
 	top_again = max_matches
 	while True:
 		print("                   -- Pilots on: ", end=' ')
@@ -210,8 +273,8 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 			else:
 				print(chan.upper(), end=' ')
 		print(" --")
-		print('\n\n                   ---- VTX Guru suggestions: ----')
-		print("\n                   Groups contain {} channel matches\n".format(max_matches))
+		print('\n\n                ------- VTX Guru suggestions: -------')
+		print("\n                 Groups contain ~ {} ~ channel matches\n".format(max_matches))
 		for i in range(len(matches_lists[max_matches-1])):
 			idx = matches_lists[max_matches-1][i]
 			list_line = group_list[idx]
@@ -226,10 +289,19 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 				else:
 					print(chan.upper(), end=' ')
-			if int(num_pilots) > 4:
+
+			if (int(num_pilots) > 4) and (not add_lowband):
 				score = get_score(list_line, 1)
 				print(" --   Weighted Video Clarity Score: {}".format(score))
-			elif int(num_pilots) <= 4:
+
+			elif (int(num_pilots) > 4) and (add_lowband):
+				score = get_score(list_line, 0)
+				print(" --   Video Clarity Score: {}".format(score), end='  ')
+				wscore = get_score(list_line, 1)		
+				print(" --   Weighted Video Clarity Score: {}".format(wscore))
+				
+
+			else:
 				score = get_score(list_line, 0)
 				print(" --   Video Clarity Score: {}".format(score))
 
@@ -265,6 +337,7 @@ def get_vtx_group(line):
 def get_charts():
 
 	usa_only = False
+	add_lowband = False
 
 
 	print("""
@@ -306,16 +379,25 @@ O-O|O-O|O-O|O-O|O-O|O-O|O-O|>CHARTS EXPLORER<|O-O|O-O|O-O|O-O|O-O|O-O|O-O|O
 		usa_only = input("""
 -- Should the chart include only 
 -- U.S. legal channels?
--- (Enter Y or N) ===============> """).lower()
+-- (Enter Y or N) ===============> """).lower().strip(' ')
 
 		if usa_only == "y":
 			usa_only = True
 			break
 		if usa_only == 'n':
 			usa_only = False
-			break
-		else:
-			print("---- Try again ----")
+			add_lowband = input("""
+-- Should the chart include 40
+-- channels plus lowband?
+-- (Enter Y or N) ===============> """).lower().strip(' ')
+			if add_lowband == 'y':
+				add_lowband = True
+				break
+			if add_lowband == 'n':
+				add_lowband = False
+				break
+			
+		print("---- Try again ----")
 
 	studies = [
 	'libr/studies/markd_up/list3.txt', 
@@ -328,6 +410,12 @@ O-O|O-O|O-O|O-O|O-O|O-O|O-O|>CHARTS EXPLORER<|O-O|O-O|O-O|O-O|O-O|O-O|O-O|O
 		'libr/studies/markd_up/list4usa.txt', 
 		'libr/studies/markd_up/list5usa.txt', 
 		'libr/studies/markd_up/list6usa.txt']
+
+	if add_lowband:
+		studies = ['libr/studies/markd_up/list3low.txt', 
+		'libr/studies/markd_up/list4low.txt', 
+		'libr/studies/markd_up/list5low.txt', 
+		'libr/studies/markd_up/list6low.txt']
 
 	f = open(studies[int(num_pilots) - 3])
 	first_line = f.readline()
@@ -353,9 +441,9 @@ O-O|O-O|O-O|O-O|O-O|O-O|O-O|>CHARTS EXPLORER<|O-O|O-O|O-O|O-O|O-O|O-O|O-O|O
 			else:
 				print("{}. ".format(enumerate_num) + y, end='')
 			enumerate_num +=1
-		more = input("\n\nPress Enter for more results. Press Q to Quit ====> ").lower()
+		more = input("\n\n-- Press Enter for more results. Enter D if done. ====> ").lower()
 		more.strip(' ')
-		if more == 'q':
+		if more == 'd':
 				break
 		print('\n')
 			

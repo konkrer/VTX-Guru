@@ -1,14 +1,15 @@
-
+from time import sleep
 
 """
 A class made to hold a frequency group of 5GHz FPV VTX channels,
 then analyze and/or score for IMD interference level. 
 
-Investigate method allows for scoring all possible combinations
-of 40 VTX channels in study group.  Only passing scores are output
-to file.  U.S. legal channels only option available; and selective removal of
-channels allow for almost all possible subsets of the 40 channel set to 
-be explored. (min 8 channel subset, i.e.one FPV VTX band)
+Investigate method allows for scoring all possible combinations of
+channels in study group. 40 channels, plus lowband channels availavle
+to add to study group. Only groups with passing scores are output to 
+file.  U.S. legal channels only option available. Selective removal 
+of channels allows for almost all possible subsets of parent set to 
+be explored. (removal allowed up to 40 channels)
 
 """
 
@@ -51,7 +52,7 @@ class FreqSet:
 """)
     print("""    
     Enter Band Channel abbreviation or four digit frequency.
-    -Bands: A - B - E - F - R(C)
+    -Bands: A - B - E - F - R(C) - L
     -Channels: 1-8
     
 """)   
@@ -70,7 +71,7 @@ class FreqSet:
   def ask_question(self, ques_num, quit_on):
 
     questions =[
-      "\n-- Enter first VTX channel -OR-\n-- enter G to input entire group at once ==> ",
+      "\n-- Enter first VTX channel -OR-\n-- Enter entire group at once ==> ",
       "\n-- Enter second video channel => ",
       "\n-- Enter third video channel\n-- (Enter D if done) ==========> ",
       "\n-- Enter fourth video channel\n-- (Enter D if done) ==========> ",
@@ -94,9 +95,6 @@ class FreqSet:
       "\n-- Enter second video channel\n-- (Enter D if done) ==========> ",
       ] 
 
-    bands = ['a', 'b', 'c', 'e', 'f', 'r']
-    channels = [str(x) for x in range(1,9)]
-
 
     while True:
 
@@ -109,33 +107,35 @@ class FreqSet:
         answer = input(questions[ques_num]).lower().strip(' ')
       
       if ques_num == 0:
-        if answer == 'g':
-          while True:
-            string_group = input('\n-- Enter channel group ======> ').lower()
-            input_group_init = string_group.split(' ')
-            input_group = [x for x in input_group_init if x != '']
+        
+        input_group_init = answer.split(' ')           
+        if len(input_group_init) > 1:
+          input_group = [x for x in input_group_init if x != '']
 
-            if len(input_group) < 2 or len(input_group) > 32:
-              print('\n-----Try again.-----')
-              continue
+          if  len(input_group) > 40:
+            print('\n----- Try again. -----')
+            continue
 
-            ok = True
-            for chan in input_group:
-              if not self.check_channel_input(chan, bands, channels):
-                ok = False
-                break
-            if not ok:
-              continue
+          ok = True
+          for chan in input_group:
+            if not self.check_channel_input(chan):
+              ok = False
+              break
 
+          if ok:
             self.group = input_group
             return False
+
+          else:
+            continue
 
 
       if ques_num >= int(quit_on):
         if answer == 'd':        
           return False
 
-      if self.check_channel_input(answer, bands, channels):
+      
+      if self.check_channel_input(answer):
         self.group.append(answer)
         return True
 
@@ -144,28 +144,28 @@ class FreqSet:
 
 
 
-  def check_channel_input(self, chan_input, bands, channels):
+
+  def check_channel_input(self, chan_input):
     
+    bands = ['a', 'b', 'c', 'e', 'f', 'r', 'l']
+    channels = [str(x) for x in range(1,9)]
 
     try:
         
       if (chan_input[0] in bands and chan_input[1] in channels)\
-      and len(chan_input) == 2:
-          
+      and len(chan_input) == 2:         
         return True
 
-
-      elif (int(chan_input) <= 5945 and int(chan_input) >= 5645):
-          
+      if (int(chan_input) <= 5945 and int(chan_input) >= 5325):        
         return True
          
       else:
-        print("\n-----Try Again.-----\n")
+        print("\n----- Try Again. -----\n")
         return False
 
 
     except (ValueError, IndexError):
-      print("\n-----Try Again.-----\n")
+      print("\n----- Try Again. -----\n")
       return False
 
 
@@ -403,7 +403,7 @@ class FreqSet:
 
            
 
-    ratio = (IMD_close_to_chan / len(group))
+    #ratio = (IMD_close_to_chan / len(group))
 
     if printz: 
       print(" Number of Problem \n IMD frequencies: ============> " + str(divide_by) + "\n")
@@ -416,14 +416,14 @@ class FreqSet:
       score_alt = 0
       if printz:
         if closest_broadcast <= 27:
-          print(" *****VTX channels too close!!! %s MHz apart.*****\n" % (closest_broadcast))
+          print(" ***** VTX channels too close!!! %s MHz apart. *****\n" % (closest_broadcast))
         else:
           print(" Minimum VTX\n channel separation  =========> %sMHz\n" % (closest_broadcast))
     
     elif closest_broadcast <= 27:
       score_alt = 0
       if printz:
-        print(" *****VTX channels too close!!! %s MHz apart.*****\n" % (closest_broadcast)) 
+        print(" ***** VTX channels too close!!! %s MHz apart. *****\n" % (closest_broadcast)) 
     
     else:
 
@@ -431,7 +431,7 @@ class FreqSet:
            
         if closest_broadcast < 35:
           if printz:
-             print(" ***VTX channels close! %s MHz apart.***\n" % (closest_broadcast))
+             print(" *** VTX channels close! %s MHz apart. ***\n" % (closest_broadcast))
 
         else:
           if printz:
@@ -461,14 +461,17 @@ class FreqSet:
         
         
         if len(group) == 6:
-          
-          score_alt_weighted = round(score_alt * 2.204, 1)  # old factor 1.966
+
+          # scale so top scoring 6 group now scores 100 (multipling by appropriate factor). IMD6 now scores 62.3 (non-lowband groups)        
+          score_alt_weighted = round(score_alt * 2.204, 1) 
           
         
         elif len(group) == 5:
           
-          compressor =  ((80.0053 - score_alt) / 6.1) + score_alt
-          score_alt_weighted = round((compressor + 20), 1) 
+          # compress range of 5 group scores so when top scoring group (80) becomes 100 (+20) IMD5 now scores 62.3 (non-lowband groups)
+          if score_alt < 80:
+            score_alt =  ((80 - score_alt) / 6.09) + score_alt
+          score_alt_weighted = round((score_alt + 20), 1) 
           
 
       else:
@@ -480,11 +483,17 @@ class FreqSet:
         else:
           score_alt = 100.0 * broadcast_factor
 
+    # to generate weighted score for 5 & 6 channel groups with perfect IMD scores; only needed for lowband groups
+    if (divide_by == 0) and (len(group) in [5, 6]):
+      if len(group) == 6:
+        score_alt_weighted = round(score_alt * 2.204, 1)
+      if len(group) == 5:
+        score_alt_weighted = round((score_alt + 20), 1)
 
 
     if printz:
       if IMD_score != None:
-        print(" IMD Score: ==================> {:.2f}\n".format(round(IMD_score, 2)))
+        print(" IMD Score: ==================> {:.2f}\n".format(round(IMD_score, 2))) 
       print(" Video Clarity Score: ========> {:.2f}".format(round(score_alt, 2)))
       if score_alt_weighted:
         print("""
@@ -576,7 +585,7 @@ class FreqSet:
         
         if (num_channels == '7'):
           print("\n\n\n**** YOU SELCETED 7 ......SNEAKY!!! GET READY TO WAIT FOR COMPLETION!\n**** CTRL C to force quit program.")  
-          print("**** SCORE LIMIT FOR CHANNEL GROUPS LOWERED TO 8.")
+          print("**** SCORE LIMIT FOR CHANNEL GROUPS LOWERED TO 8 (unless adding lowband)")
           score_limit = 8
           break
           
@@ -586,26 +595,35 @@ class FreqSet:
         print("\n\n---- Try Again ----\n\n")
     
     while True:
-      usa_only_raw = input("\n\n--USA only? (Enter Y or N) =====> ").lower()
-      usa_only = usa_only_raw.strip(' ')
+      usa_only = input("\n\n-- USA only? (Enter Y or N) ====> ").lower().strip(' ')
+      
       if usa_only == 'y':
-        print('\n\n** USA VTX CHANNELS ONLY CONFIRMED **\n\n')
+        print('\n\n---- USA VTX CHANNELS ONLY CONFIRMED ----\n\n')
         usa_only = True
         break
       if usa_only == 'n':
         print('\n\n---- 40 VTX CHANNELS CONFIRMED ----\n\n')
         usa_only = False
-        break
-      else:
-        print("\n\n---- Try Again ----\n\n")
+        add_lowband = input("-- Add lowband channels? (Enter Y or N) =====> ")
+        if add_lowband == 'y':
+          add_lowband = True
+          if num_channels == '7':
+            score_limit = 60
+          break
+        if add_lowband == 'n':
+          add_lowband = False
+          break
+      
+      print("\n\n---- Try Again ----\n\n")
       
 
     if not usa_only:
       while True:
         extra_remove_raw = input("""
--- Would you like to remove any frequencies from the 40 VTX channel set? --
 
--- Enter Y for Yes or N for No =======> """).lower()
+-- Remove any frequencies from the VTX channel set? --
+
+-- (Enter Y or N) ==============> """).lower()
         extra_remove = extra_remove_raw.strip(' ')
         if (extra_remove == 'y'):
           extra_remove = True
@@ -618,47 +636,59 @@ class FreqSet:
     
     if extra_remove:
       to_remove = FreqSet()
-      to_remove.get_input(False, 32, 1)
-      new_list =[]
-      
-      
+      to_remove.get_input(False, 40, 1)
+           
       if 'f8' in to_remove.group:
         f8_idx = to_remove.group.index('f8')
         to_remove.group[f8_idx] = 'r7'
 
+      new_list =[]
       for chan in to_remove.group:
         if (chan not in new_list):
           new_list.append(chan)
       to_remove.group = new_list
       
 
-    self.output = input("-- Filename to output data?\n\n-- (E.g. something.txt): ")
+    self.output = input("\n-- Filename to output data?\n\n-- (E.g. something.txt): ")
 
     
     channels = []
 
-    with open('libr/vtx_channel_guide_abrv.txt', 'r') as f:
-      for line in f:
+    with open('libr/vtx_channel_guide_abrv.txt') as f:
+      for i in range(39):
 
+        line = f.readline()
         sliced_raw = line.split(', ')
         channels.append(sliced_raw[0])
 
     if usa_only:
       channels.remove('e4')
       channels.remove('e7')
-      channels.remove('e8') 
+      channels.remove('e8')
+    
+    if add_lowband:
+      channels = []
+      with open('libr/vtx_channel_guide_abrv.txt') as f:
+        for i in range(47):
+          line = f.readline()
+          sliced_raw = line.split(', ')
+          channels.append(sliced_raw[0])
 
-    else:
-      if extra_remove:
-        for chan in to_remove.group:
-          try:
-            channels.remove(chan)
-          except ValueError:
-            pass
-        print("\n\n\n** Channels that were removed\n   from study set ============> ", end=' ')
-        for chan in to_remove.group:
-          print(chan, end=' ')
-        print("\n")
+    if extra_remove:
+      for chan in to_remove.group:
+        try:
+          channels.remove(chan)
+        except ValueError:
+          pass
+      print("\n\n\n** Channels that were removed\n   from study set ============> ", end=' ')
+      for chan in to_remove.group:
+        print(chan, end=' ')
+      print("\n")
+
+      if len(channels) < int(num_channels):
+        print("**** Too many channels removed! ****")
+        sleep(3)
+        return
 
     print("\n")
     gen = combo_explor(channels, int(num_channels))
@@ -679,18 +709,34 @@ class FreqSet:
       converted = self.convert_freq_abbreviations()
       self.score(converted, False)
 
-      if int(num_channels) in [5,6]:
+
+      if ((int(num_channels) == 5) and not (add_lowband)):
+
+        # judge scores by weighted scores for 5 channel non-lowband groups
         if self.scores[1] != None:
           if self.scores[1] >= score_limit:
             self.export(converted)
 
+      if (int(num_channels) == 6):
+        
+        if add_lowband:
+          if self.scores[1] != None:
+            if self.scores[1] >= 80:
+              self.export(converted)
+        else:
+          if self.scores[1] != None:
+            if self.scores[1] >= score_limit:
+              self.export(converted)
+
+
+      # judge scores by un-weighted scores for all other groups
       else:
         if self.scores[0] >= score_limit:
           self.export(converted)
       
       coutner+=1
 
-    print("\n\n-- %s Combinations checked!" % (coutner))
+    print("\n\n---- %s Combinations checked! ----" % (coutner))
 
     
     

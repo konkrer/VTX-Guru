@@ -25,14 +25,14 @@ while True:
                        and produces video clarity score.
 
  
--- 3. Charts         - See charts of channel groups  possessing a passing video
+-- 3. Charts         - See charts of channel groups possessing a passing video
       Explorer         clarity score. See what the best scoring groups are!
 
 
--- 4. EZ Investigate - Used to investigate all possible combinations of
-                       VTX channel groups. Produces a scored list, from 
-                       best to worst. (Use this if 40 channel or U.S. legal 
-                       channels only doesn't meet your channel needs.)
+-- 4. EZ Investigate - Used to investigate all possible combinations of VTX channel
+                       groups. Produces a scored list, from best to worst. (Use this 
+                       if the included 40 channel, U.S. legal channels only, or 
+                       40 channel plus lowband charts don't meet your needs.)
                                                            
 
 

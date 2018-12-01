@@ -16,15 +16,18 @@ while True:
   x.analyze_interference(converted)
   x.score(converted)
   
-  export = input("-- Would you like to export channel group to file? --\n\n-- (Enter X to export, Press Enter to continue): ").lower()
-  if export == "x":
-    x.export(converted)
 
-  loop = input("\n-- Enter Q to Quit IMD Analyzer. Press Enter to continue: \n\n").lower()
+  loop = input("\n-- Enter Q to Quit IMD Analyzer\n-- Enter X to export\n-- Press Enter to continue: \n\n").lower().strip(' ')
   if loop =='q':
     sleep(.75)
     break
-  else:
-    print("-- Let's go again... --\n\n")
-    sleep(.75)
+  if loop == "x":
+    x.export(converted)
+    cont = input("-- Enter Q to Quit IMD Analyzer: ").lower().strip(' ')
+    if cont =='q':
+      sleep(.75)
+      break
+    
+  print("-- Let's go again... --\n\n")
+  sleep(.75)
     
