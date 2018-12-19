@@ -32,14 +32,20 @@ def quicksort(lst, start, end):
 	pivot_value = lst[pivot]
 	lst[pivot], lst[end] = lst[end], lst[pivot]
 	marker = start
+
+	# order by score
 	for i in range(start,end):
 		if get_score(lst[i], 0) > get_score(pivot_value, 0):
 			lst[marker], lst[i] = lst[i], lst[marker]
 			marker += 1
+
+		# if scores are equal order by vtx separation
 		elif get_score(lst[i], 0) == get_score(pivot_value, 0):
 			if get_vtx_sep(lst[i]) > get_vtx_sep(pivot_value):
 				lst[marker], lst[i] = lst[i], lst[marker]
 				marker += 1
+				
+			# if vtx separation is equal then alphabetize to order
 			elif get_vtx_sep(lst[i]) == get_vtx_sep(pivot_value):
 				if lst[i] < pivot_value:
 					lst[marker], lst[i] = lst[i], lst[marker]
@@ -77,9 +83,19 @@ def get_vtx_sep(string):
 	return vtx_sep
 
 
+def get_freq_group(string):
 
+	halves = string.split('   ')
+	channels = halves[1].split(' -- ')
+	freqs = channels[2].strip('\n').strip(' ').split(' ')
+	return freqs
 
+def get_chan_group(string):
 
+	halves = string.split('   ')
+	channels = halves[1].split(' -- ')
+	chans = channels[0].strip('\n').strip(' ').split(' ')
+	return chans
 
 
 

@@ -19,26 +19,30 @@ def smart_lookup(num_pilots=None, usa_only=None, group_to_find=None):
 			
 
 
-===========================================================================
-$$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-===========================================================================
+=================================================================================
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+=================================================================================
 
 
-			     ~ VTX Guru ~
-			     Smart Search
+			        ~ VTX Guru ~
+			        Smart Search
 
-	         VTX Channel Group Recommendation Engine
+	            VTX Channel Group Recommendation Engine
 
 
-  Find a high clarity VTX channel group for 3 to 6 FPV pilots, while 
-  ensuring as few as possible pilots need to change channels. VTX Guru
-  will find the best rated group that contains as many of the given 
-  channels as possible.
+  Find a high clarity VTX channel group for 3 to 6 FPV pilots, while ensuring 
+  as few as possible pilots need to change channels. VTX Guru will find the 
+  best rated group that contains as many of the given channels as possible.
+
+  Only groups possessing a passing video clarity score or passing weighted 
+  video clarity score are searched. Scores range from 60 (worst) to 100 (best). 
   
-  Only groups possessing a passing video clarity score are searched.
-  Scores range from 60 (worst) to 100 (best). If scores returned are
-  too low to your liking enter 'L' to look at a list of groups with one 
-  less matching channel.
+
+  If scores returned are too low to your liking enter 'L' to look at a list of 
+  groups with one less matching channel. If some pilots can change channels 
+  eaisly and some cannot, you may want to enter only the difficult to change 
+  channels; so difficult to change channels are more easily found in the groups 
+  returned. 
 
 
 
@@ -105,6 +109,8 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 				elif add_lowband == 'y':
 					add_lowband = True
+					if num_pilots == '6':
+						print("\n-- *(Lowband 6 channel groups passing scores are 80 and above, weighted.)\n")
 
 					L_max = input("\n-- How many pilots have a lowband VTX?\n-- (1-6) =========> ").strip(" ")
 					if (L_max == '1') or (L_max == '2')\

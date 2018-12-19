@@ -1,5 +1,29 @@
+def scores_info():
+	print("""
 
-print("""
+
+
+	=====================================================================================================
+	>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>INFO<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	=====================================================================================================
+		""")
+
+	while True:
+		print("\n")
+		with open('libr/SCORES.md') as f:
+			print(f.read())
+
+		loop = input("\n-- Press Enter when done.\n\n").lower()
+		break
+
+
+
+
+
+
+
+def imd_info():
+	print("""
 
 
 
@@ -8,10 +32,10 @@ print("""
 =====================================================================================================
 	""")
 
-while True:
-	print("\n")
-	with open('README.md') as f:
-		print(f.read())
+	while True:
+		print("\n")
+		with open('libr/IMD_FPV.md') as f:
+			print(f.read())
 
-	loop = input("\n-- Press Enter when done.\n\n").lower()
-	break
+		loop = input("\n-- Press Enter when done.\n\n").lower()
+		break

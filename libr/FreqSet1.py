@@ -515,7 +515,7 @@ class FreqSet:
 
 
 
-  def export(self, converted):
+  def export(self, converted, csv=False):
     
     if self.output == None:
       
@@ -535,8 +535,7 @@ class FreqSet:
           f.write(str(freq) + " ",) 
         f.write("\n")
 
-    else:
-
+    elif csv == False:
       with open(self.output, "a") as f:
         f.write("%.2f  %s  %s   " % (round(self.scores[0], 2), self.scores[1], self.scores[2]))
         for chan in self.group:
@@ -550,6 +549,22 @@ class FreqSet:
           f.write(str(freq) + " ",)
         f.write("\n")
  
+    else:
+
+      with open(self.output, "a") as f:
+        f.write("%.2f,%s,%s," % (round(self.scores[0], 2), self.scores[1], self.scores[2]))
+        for chan in self.group:
+          f.write(str(chan) + " ",)
+        f.write(',')
+        for freq in converted:
+          f.write(str(freq) + " ",)
+        f.write(',')
+        converted.sort()
+        for freq in converted:
+          f.write(str(freq) + " ",)
+        f.write("\n")
+
+
 
 
 
@@ -558,7 +573,11 @@ class FreqSet:
 
   def investigate(self, score_limit=60):
 
+    num_channels = 0
+    usa_only = False
+    add_lowband = False
     extra_remove = False
+    csv = False
     print("""
 
 
@@ -652,6 +671,13 @@ class FreqSet:
           new_list.append(chan)
       to_remove.group = new_list
       
+    csv_ques = input('\n-- Export to CSV? (Enter Y or N) =====> ').strip(' ').lower()
+    if csv_ques == 'y':
+      print('\n-- Exporting to CSV.')
+      csv = True
+    else:
+      print('\n-- Exporting readable text format.')
+
 
     self.output = input("\n-- Filename to output data?\n\n-- (E.g. something.txt): ")
 
@@ -695,6 +721,11 @@ class FreqSet:
         return
 
     print("\n")
+
+    if csv:
+      with open(self.output, "a") as f:
+          f.write("score,weighted_score,vtx_separation,channel_group,freq_group,frequency_group\n")
+
     gen = combo_explor(channels, int(num_channels))
 
     coutner = 0
@@ -714,29 +745,29 @@ class FreqSet:
       self.score(converted, False)
 
 
+      # judge scores by weighted scores for 5 channel non-lowband groups
       if ((int(num_channels) == 5) and not (add_lowband)):
-
-        # judge scores by weighted scores for 5 channel non-lowband groups
+     
         if self.scores[1] != None:
           if self.scores[1] >= score_limit:
-            self.export(converted)
+            self.export(converted, csv)
 
       if (int(num_channels) == 6):
         
         if add_lowband:
           if self.scores[1] != None:
             if self.scores[1] >= 80:
-              self.export(converted)
+              self.export(converted, csv)
         else:
           if self.scores[1] != None:
             if self.scores[1] >= score_limit:
-              self.export(converted)
+              self.export(converted, csv)
 
 
       # judge scores by un-weighted scores for all other groups
       else:
         if self.scores[0] >= score_limit:
-          self.export(converted)
+          self.export(converted, csv)
       
       coutner+=1
 

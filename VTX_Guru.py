@@ -1,4 +1,5 @@
 from time import sleep
+import libr.Info
 
 
 while True:
@@ -69,9 +70,9 @@ while True:
 		sleep(.5)
 		exec(open('Investigate.py').read())
 	if choice == '5':
-		exec(open('libr/Info2.py').read())
+		libr.Info.imd_info()  #exec(open('libr/Info2.py').read())
 	if choice == '6':
-		exec(open('libr/Info.py').read())
+		libr.Info.scores_info()  #exec(open('libr/Info.py').read())
 	if choice == 'q':
 		print('\n\n')
 		break

@@ -1,8 +1,8 @@
 from libr.FreqSet1 import FreqSet
-from time import sleep
+
 
 """
-Run this script to see IMD analysis of all of E.T. (http://etserv.etheli.com)
+Run this script to see IMD Ace analysis of all of E.T. (http://etserv.etheli.com)
 top rated  VTX channel groups.
 """
 
@@ -18,13 +18,13 @@ print('===================ET 6 GROUPS============================')
 print('==========================================================\n\n')
 
 
-print("------------ET6\n")
+print("------------ETBest6\n")
 x = FreqSet([5645, 5685, 5760, 5805, 5905, 5945])
 freq_list = x.convert_freq_abbreviations()
 x.analyze_interference(freq_list)
 x.score(freq_list)
  
-print('---------R and F band\n')
+print('---------IMD 6C\n')
 x = FreqSet(['r1', 'r2', 'f2', 'f4', 'r7', 'r8'])
 freq_list = x.convert_freq_abbreviations()
 x.analyze_interference(freq_list)
@@ -41,7 +41,7 @@ print('==========================================================')
 print('===================ET 5 GROUPS============================')
 print('==========================================================\n\n')
 
-print("------------ET6-1\n")
+print("------------ET6minus1\n")
 x = FreqSet(['5645', '5685', '5760', '5905', '5945'])
 freq_list = x.convert_freq_abbreviations()
 x.analyze_interference(freq_list)
@@ -76,3 +76,23 @@ x = FreqSet(['5685', '5760', '5800', '5860', '5905'])
 freq_list = x.convert_freq_abbreviations()
 x.analyze_interference(freq_list)
 x.score(freq_list)
+
+
+
+print('==========================================================')
+print('===================ET 4 GROUP============================')
+print('==========================================================\n\n')
+
+print('--------------Raceband 4\n')
+x = FreqSet([5658, 5732, 5843, 5917])
+freq_list = x.convert_freq_abbreviations()
+x.analyze_interference(freq_list)
+x.score(freq_list)
+
+
+
+
+
+
+
+
