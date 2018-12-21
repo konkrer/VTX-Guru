@@ -120,19 +120,21 @@
 	the broadcast (VTX) channels separations and the resultant IMD profile; and to improve
 	the IMD scores calculation. I am not a R.F. professional; this is an experimental approach.
 
-	One way to observe the current adjustments being made by broadcast factor is to open two
-	instances of VTX Guru - one opened to Charts Explorer and the other opened to IMD Ace. 
-	Find in a chart a group that has a VTX separation of less than 40, which also has a group
-	just above it with - 1. a higher score (but not score 100) and 2. a VTX separation of 40 or 
-	more. Copy and paste that first group into IMD Ace and analyze it. Repeat this for the group 
-	just above. You should be able to see that the group with less VTX channel separation has 
-	a slightly better IMD Score, but it's Video Clarity Score has been lowered past the above 
-	group because of the broadcast factor.
+	One way to observe the current adjustments being made by broadcast factor is to open the 
+	Charts tool and select for 5 pilots then select for the 40 VTX channel study set -  
+	(i.e. NOT USA only and NOT lowband). You should be able to see that the 7th best group in the 
+	list has a better IMD Score than any other group, but it's Video Clarity Score (labeled SCORE) 
+	has been lowered past the above groups because of the broadcast factor. Whether this group 
+	has been moved down the correct amount is certainly a point of consideration concerning tuning 
+	the broadcast factor; as well for determining the best 5 channel group from the 40 channel 
+	study set.
 
 	Also, the reducing factor that is used to calculate the IMD Score is a major candidate to 
 	be adjusted; to alter how much the IMD score diminishes with additional IMD_close_to_chan 
 	events.
 
-
+	The algorithm is currently tuned to give relevant results with 2 to 6 pilots flying at 
+	once. To be able to better judge larger numbers of pilots flying at once the broacast factor
+	would need to be adjusted.
 
 

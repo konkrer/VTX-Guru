@@ -44,8 +44,8 @@ libr/studies/ -  Where VTX channel group lists are located. All lists are also v
 				 from within VTX Guru. Group lists are sorted lists of "passing" channel groups organized by 
 				 number of pilots and channel set studied. 
 				 For example:
-				 list3usa.txt = 3 channel groups of USA legal channels only.
-				 list3.txt    = 3 channel groups of 40 channel vtx group.
+				 list3usa.txt = 3 channel groups of USA legal channels only |
+				 list3.txt    = 3 channel groups of 40 channel vtx group |
 				 list3low.txt = 3 channel groups of 40 channel vtx group plus lowband channels.
 
 

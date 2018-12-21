@@ -1,5 +1,5 @@
 from libr.FreqSet1 import FreqSet
-from libr.sorter import get_score
+from libr.sorter import get_score, get_chan_group
 from time import sleep
 
 
@@ -215,8 +215,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 		'libr/studies/list6low.txt']
 
 	with open(studies[int(num_pilots) - 3]) as f:
-		group_list = f.readlines()
+		raw_group_list = f.readlines()
 
+	group_list = raw_group_list[3:]
 	max_matches = 0
 	matches_lists = [[], [], [], [], [], []]
 	E_extra_list = ['e4', 'e7', 'e8']
@@ -227,7 +228,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 		matches = 0
 		ex_match = 0
 		L_match = 0
-		group = get_vtx_group(group_list[i])
+		group = get_chan_group(group_list[i])
 		
 		#print(E_extra_max)
 		if E_extra_max != None:
@@ -284,7 +285,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 		for i in range(len(matches_lists[max_matches-1])):
 			idx = matches_lists[max_matches-1][i]
 			list_line = group_list[idx]
-			group = get_vtx_group(list_line)
+			group = get_chan_group(list_line)
 			print('\n\n {}.'.format(i+1), end='  ')
 			for chan in group:
 				if entered_f8:
@@ -297,13 +298,13 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 					print(chan.upper(), end=' ')
 
 			if (int(num_pilots) > 4) and (not add_lowband):
-				score = get_score(list_line, 1)
+				score = get_score(list_line, 2)
 				print(" --   Weighted Video Clarity Score: {}".format(score))
 
 			elif (int(num_pilots) > 4) and (add_lowband):
 				score = get_score(list_line, 0)
 				print(" --   Video Clarity Score: {}".format(score), end='  ')
-				wscore = get_score(list_line, 1)		
+				wscore = get_score(list_line, 2)		
 				print(" --   Weighted Video Clarity Score: {}".format(wscore))
 				
 
@@ -329,13 +330,6 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$>SMART SEARCH<$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
 
-
-def get_vtx_group(line):
-	split1 = line.split('   ')
-	split2 = split1[1].split(' -- ')
-	group = split2[0].split(' ')
-
-	return group
 
 
 
@@ -406,22 +400,22 @@ O-O|O-O|O-O|O-O|O-O|O-O|O-O|>CHARTS EXPLORER<|O-O|O-O|O-O|O-O|O-O|O-O|O-O|O
 		print("---- Try again ----")
 
 	studies = [
-	'libr/studies/markd_up/list3.txt', 
-	'libr/studies/markd_up/list4.txt', 
-	'libr/studies/markd_up/list5.txt', 
-	'libr/studies/markd_up/list6.txt']
+	'libr/studies/list3.txt', 
+	'libr/studies/list4.txt', 
+	'libr/studies/list5.txt', 
+	'libr/studies/list6.txt']
 
 	if usa_only:
-		studies = ['libr/studies/markd_up/list3usa.txt', 
-		'libr/studies/markd_up/list4usa.txt', 
-		'libr/studies/markd_up/list5usa.txt', 
-		'libr/studies/markd_up/list6usa.txt']
+		studies = ['libr/studies/list3usa.txt', 
+		'libr/studies/list4usa.txt', 
+		'libr/studies/list5usa.txt', 
+		'libr/studies/list6usa.txt']
 
 	if add_lowband:
 		studies = ['libr/studies/markd_up/list3low.txt', 
-		'libr/studies/markd_up/list4low.txt', 
-		'libr/studies/markd_up/list5low.txt', 
-		'libr/studies/markd_up/list6low.txt']
+		'libr/studies/list4low.txt', 
+		'libr/studies/list5low.txt', 
+		'libr/studies/list6low.txt']
 
 	f = open(studies[int(num_pilots) - 3])
 	first_line = f.readline()
@@ -437,15 +431,16 @@ O-O|O-O|O-O|O-O|O-O|O-O|O-O|>CHARTS EXPLORER<|O-O|O-O|O-O|O-O|O-O|O-O|O-O|O
 			x = f.readline()
 			if (x == ""):
 				return
-			y = x.replace('100.0', '100 ')
+			y = x.replace('100.00', '100 ')
+			z = y.replace('100.0', '100 ')
 			if enumerate_num < 10:
-				print("{}.    ".format(enumerate_num) + y, end='')
+				print("{}.    ".format(enumerate_num) + z, end='')
 			elif enumerate_num < 100:
-				print("{}.   ".format(enumerate_num) + y, end='')
+				print("{}.   ".format(enumerate_num) + z, end='')
 			elif enumerate_num < 1000:
-				print("{}.  ".format(enumerate_num) + y, end='') 
+				print("{}.  ".format(enumerate_num) + z, end='') 
 			else:
-				print("{}. ".format(enumerate_num) + y, end='')
+				print("{}. ".format(enumerate_num) + z, end='')
 			enumerate_num +=1
 		more = input("\n\n-- Press Enter for more results. Enter D if done. ====> ").lower()
 		more.strip(' ')

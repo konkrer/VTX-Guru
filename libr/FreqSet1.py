@@ -411,9 +411,13 @@ class FreqSet:
       #print(" Problem IMD close / Channels \n ratio is: ===================> " + str(round(ratio, 1)) + "\n")
       print(" Minimum Problem IMD\n frequency seperation\n to VTX channel: =============> " + str(closest_imd) + " MHz\n")
 
-    
+    if divide_by != 0:
+      IMD_score =  100 - (((float(score_total) /divide_by) ** .5) * 2.857142857)             
+      IMD_score *= (1 - (IMD_close_to_chan / 30))  # to reduce proportional to close IMD channels
+
     if closest_imd == 0:
       score_alt = 0
+      IMD_score = 0
       if printz:
         if closest_broadcast <= 27:
           print(" ***** VTX channels too close!!! %s MHz apart. *****\n" % (closest_broadcast))
@@ -447,10 +451,7 @@ class FreqSet:
 
 
       if divide_by != 0:
-
-        score_alt =  100 - (((float(score_total) /divide_by) ** .5) * 2.857142857)             
-        score_alt *= (1 - (IMD_close_to_chan / 30))  # to reduce proportional to close IMD channels
-        IMD_score = score_alt
+        score_alt = IMD_score 
         
         if broadcast_factor:   
           score_alt *= broadcast_factor  # to reduce proportional to close broadcast channels
@@ -479,13 +480,17 @@ class FreqSet:
           
 
       else:
+        IMD_score = 100.00
+
         if broadcast_factor == None:
-          score_alt = 100.0
+          score_alt = 100.00
           if printz:
-            print(" Minimum VTX\n channel separation  =========> %sMHz\n\n" % (closest_broadcast))
-        
+            print(" Minimum VTX\n channel separation  =========> %sMHz\n\n" % (closest_broadcast))        
         else:
           score_alt = 100.0 * broadcast_factor
+
+    score_alt = round(score_alt, 2)
+    IMD_score = round(IMD_score, 2)
 
     # to generate weighted score for 5 & 6 channel groups with perfect IMD scores; only needed for lowband groups
     if (divide_by == 0) and (len(group) in [5, 6]):
@@ -494,11 +499,11 @@ class FreqSet:
       if len(group) == 5:
         score_alt_weighted = round((score_alt + 20), 1)
 
-
+    
     if printz:
-      if IMD_score != None:
-        print(" IMD Score: ==================> {:.2f}\n".format(round(IMD_score, 2))) 
-      print(" Video Clarity Score: ========> {:.2f}".format(round(score_alt, 2)))
+      if (broadcast_factor != None) or (closest_broadcast <= 27):
+        print(" IMD Score: ==================> {:.2f}\n".format(IMD_score)) 
+      print(" Video Clarity Score: ========> {:.2f}".format(score_alt))
       if score_alt_weighted:
         print("""
  Weighted Video Clarity Score
@@ -508,7 +513,7 @@ class FreqSet:
  
       print("\n Top Possible Score is 100\n\n\n\n")
     
-    self.scores = [score_alt, score_alt_weighted, closest_broadcast]
+    self.scores = [score_alt, score_alt_weighted, closest_broadcast, IMD_score]
 
 
 
@@ -523,7 +528,7 @@ class FreqSet:
       output_file = input("-- Name of output_file?")
 
       with open(output_file, "a") as f:
-        f.write("%s  %s  %s   " % (round(self.scores[0], 2), self.scores[1], self.scores[2]))
+        f.write("%.2f  %.2f  %s  %s   " % (self.scores[0], self.scores[3], self.scores[1], self.scores[2]))
         for chan in abbreviations:
           f.write(str(chan) +" ")
         f.write('-- ')
@@ -537,7 +542,7 @@ class FreqSet:
 
     elif csv == False:
       with open(self.output, "a") as f:
-        f.write("%.2f  %s  %s   " % (round(self.scores[0], 2), self.scores[1], self.scores[2]))
+        f.write("%.2f  %.2f  %s  %s   " % (self.scores[0], self.scores[3], self.scores[1], self.scores[2]))
         for chan in self.group:
           f.write(str(chan) + " ",)
         f.write('-- ')
@@ -552,7 +557,7 @@ class FreqSet:
     else:
 
       with open(self.output, "a") as f:
-        f.write("%.2f,%s,%s," % (round(self.scores[0], 2), self.scores[1], self.scores[2]))
+        f.write("%.2f,%.2f,%s,%s," % (self.scores[0], self.scores[3], self.scores[1], self.scores[2]))
         for chan in self.group:
           f.write(str(chan) + " ",)
         f.write(',')
@@ -724,7 +729,13 @@ class FreqSet:
 
     if csv:
       with open(self.output, "a") as f:
-          f.write("score,weighted_score,vtx_separation,channel_group,freq_group,frequency_group\n")
+          f.write("score,IMD_score,weighted_score,vtx_separation,channel_group,freq_group,frequency_group\n")
+    else:
+       with open(self.output, "a") as f:
+          f.write(
+"""IMD = IMD score | WSCORE = weighted score  |  SEP = minimum VTX channel seperation
+
+SCORE | IMD | WSCORE| SEP|   CHANNELS    |        FREQUENCIES        |    Sorted Frequencies\n""")
 
     gen = combo_explor(channels, int(num_channels))
 
@@ -752,7 +763,8 @@ class FreqSet:
           if self.scores[1] >= score_limit:
             self.export(converted, csv)
 
-      if (int(num_channels) == 6):
+      # judge scores by weighted scores for 6 channel groups
+      elif (int(num_channels) == 6):
         
         if add_lowband:
           if self.scores[1] != None:

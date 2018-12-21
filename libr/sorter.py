@@ -7,18 +7,21 @@ import sys
 
 def sort_list2(inputfile):
 
-	scored_groups_list = []
+	raw_lines = []
 
 	try:
 		with open(inputfile, 'r') as f:
-			scored_groups_list = f.readlines()
+			raw_lines = f.readlines()
 	except FileNotFoundError:
 		return 
-	
+	header = raw_lines[:3]
+	scored_groups_list = raw_lines[3:]
+
 	sys.setrecursionlimit(5000)
 	quicksort(scored_groups_list, 0, (len(scored_groups_list)-1))
 	
 	with open(inputfile, 'w') as f:
+		f.writelines(header)
 		f.writelines(scored_groups_list)
 
 
@@ -79,7 +82,7 @@ def get_vtx_sep(string):
 
 	halves = string.split('   ')
 	scores = halves[0].split('  ')
-	vtx_sep = int(scores[2])
+	vtx_sep = int(scores[3])
 	return vtx_sep
 
 
@@ -94,7 +97,7 @@ def get_chan_group(string):
 
 	halves = string.split('   ')
 	channels = halves[1].split(' -- ')
-	chans = channels[0].strip('\n').strip(' ').split(' ')
+	chans = channels[0].split(' ')
 	return chans
 
 
