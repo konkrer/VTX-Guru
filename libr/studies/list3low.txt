@@ -1,6 +1,6 @@
 IMD = IMD score | WSCORE = weighted score  |  SEP = minimum VTX channel seperation
 
-SCORE | IMD | WSCORE| SEP|  CHANNELS |    FREQUENCIES  |  Sorted Frequencies
+SCORE | IMD | WSCORE| SEP|   CHANNELS    |        FREQUENCIES        |    Sorted Frequencies
 100.00  100.00  None  287   e8 r1 l1 -- 5945 5658 5333 -- 5333 5658 5945 
 100.00  100.00  None  280   e3 e8 l1 -- 5665 5945 5333 -- 5333 5665 5945 
 100.00  100.00  None  280   e8 l1 l8 -- 5945 5333 5613 -- 5333 5613 5945 

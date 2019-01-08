@@ -1,4 +1,6 @@
 from time import sleep
+import os
+module_dir = os.path.dirname(__file__)  # get current directory
 
 """
 A class made to hold a frequency group of 5GHz FPV VTX channels,
@@ -118,7 +120,7 @@ class FreqSet:
 
           ok = True
           for chan in input_group:
-            if not self.check_channel_input(chan):
+            if not check_channel_input(chan):
               ok = False
               break
 
@@ -135,149 +137,134 @@ class FreqSet:
           return False
 
       
-      if self.check_channel_input(answer):
+      if check_channel_input(answer):
         self.group.append(answer)
         return True
 
 
 
 
-
-
-
-  def check_channel_input(self, chan_input):
-    
-    bands = ['a', 'b', 'c', 'e', 'f', 'r', 'l']
-    channels = [str(x) for x in range(1,9)]
-
-    try:
-        
-      if (chan_input[0] in bands and chan_input[1] in channels)\
-      and len(chan_input) == 2:         
-        return True
-
-      if (int(chan_input) <= 5945 and int(chan_input) >= 5325):        
-        return True
-         
-      else:
-        print("\n----- Try Again. -----\n")
-        return False
-
-
-    except (ValueError, IndexError):
-      print("\n----- Try Again. -----\n")
-      return False
-
-
-
-
-
-
+  # find all IMD frequencies
   def check_freqz(self, group):
   
-    freq_bad = []
+    all_imd_freqs = []
   
     for i in range(len(group)):
-      
+
+      # for each channel create a list of all other channels
       rest = group[:i] + group[i + 1:]
-      lst_bad = []
-      
+      imd_freqs = []
+
+      # compute IMD for channel and each other channel
       for n in range(len(rest)):
 
-        bad_one = (int(group[i]) * 2) - int(rest[n])
-        lst_bad.append(bad_one)
-
-      freq_bad.append(lst_bad)
-
-
-    return freq_bad
+        imd_freq = (int(group[i]) * 2) - int(rest[n])
+        imd_freqs.append(imd_freq)
+      
+      # compile all sublists 
+      all_imd_freqs.append(imd_freqs)
 
 
-
+    return all_imd_freqs
 
 
 
 
-  def analyze_interference(self, group):
+
+  def analyze_interference(self, group, printz=True):
   
     bad_freq = self.check_freqz(group)
     bad_match = 0
     bad_close = 0
     close = 0
     near = 0
+    warnings = []
     
-    print('          --------------------------------------------------')
-    print('                | IMD close to VTX channel instances |') 
+    if printz:
+      print('          --------------------------------------------------')
+      print('                | IMD close to VTX channel instances |') 
 
-    for i in range(len(group)):
-      for sublst in bad_freq:
+    for sublst in bad_freq:
+      for x in sublst:
       
-
-        if int(group[i]) not in sublst:
-      
-          for x in sublst:
+        for i in range(len(group)):
+           
+          if int(group[i]) != x:    
             diff = abs(x - int(group[i]))
             if diff <20 and diff >= 10:
-              print("\n   Warning: IMD on %s is quite close to %s (%s MHz)" % (x, group[i], diff))
+              if printz:
+                print("\n   IMD on %s is quite close to %s (%s MHz)" % (x, group[i], diff))
+              warnings.append("IMD on %s is close to %s (%s MHz)" % (x, group[i], diff))
               close += 1
 
             elif diff < 10:
-              print("\n   Warning: IMD on %s is very close to %s (%s MHz)" % (x, group[i], diff))
+              if printz:
+                print("\n   Warning: IMD on %s is very close to %s (%s MHz)" % (x, group[i], diff))
+              warnings.append("**Warning IMD on %s is very close to %s (%s MHz)" % (x, group[i], diff))
               bad_close += 1
 
             elif  diff < 35:
-              print("\n   IMD on %s is close to %s (%s MHz)" % (x, group[i], diff))
+              if printz:
+                print("\n   IMD on %s is close to %s (%s MHz)" % (x, group[i], diff))
+              warnings.append("IMD on %s is near to %s (%s MHz)" % (x, group[i], diff))
               near += 1 
 
-        elif int(group[i]) in sublst:
-          print("\n   **Warning %s will have terrible interference! IMD exact match to VTX channel!**" % (group[i]))
-          bad_match += 1
-    if (close == 0) and (bad_close ==  0) and (near == 0) and (bad_match) == 0:
-     print('                            --- NONE ---')  
-    print('          --------------------------------------------------\n\n\n')
+          elif int(group[i]) == x:
+            if printz:
+              print("\n   **Warning: %s will have terrible interference! IMD exact match to VTX channel!**" % (group[i]))
+            warnings.append("**Warning %s will have terrible interference! IMD exact match to VTX channel!**" % (group[i]))
+            bad_match += 1
 
-
-    if bad_match + bad_close + close + near == 0:
-      print("                   -------ANALYSIS-------\n\n 	    All clear. Minimal IMD interference.")
-
-    
-    elif bad_match + bad_close + close == 0:
-      
-      print("                  -------ANALYSIS-------\n\n 	   	IMD interference not too bad.\n")
-      
-      if len(group) >= 5:
-        print(" 	This is an excellent IMD rating for 5 or 6 channels.")
-    
-
-    elif bad_match == 0 and bad_close == 0:
-      print("                  -------ANALYSIS-------\n\n 	      Troubling interference possible.\n")
-      
-      if len(group) >= 5:
-        print(" 	     Good IMD rating for 5 and 6 channels.")
-      
-
-    elif bad_match == 0 and bad_close > 0:
-      print("                   -------ANALYSIS-------\n\n 		     IMD problems likely!\n 	   IMD within 10MHz of at least one channel.")
-
-    
-    elif bad_match > 0:
-      print(" 			 -------ANALYSIS-------\n\n 	  Bad channel grouping! Debilitating interference!")
-    
     printable = self.convert_to_abbreviations()
-
-    print("\n")
-    print("                 ", end='')
-    for chan in printable:
-      print (chan.upper(), end='   ')
-    
     converted = self.convert_freq_abbreviations()
 
-    print("\n")
-    print("           ", end='')
-    for chan in converted:
-      print (chan, end='   ')
+    if printz:
+      if (close == 0) and (bad_close ==  0) and (near == 0) and (bad_match) == 0:
+       print('                            --- NONE ---')  
+      print('          --------------------------------------------------\n\n\n')
 
-    print("\n\n\n")
+
+      if bad_match + bad_close + close + near == 0:
+        print("                   -------ANALYSIS-------\n\n 	    All clear. Minimal IMD interference.")
+
+      
+      elif bad_match + bad_close + close == 0:
+        
+        print("                  -------ANALYSIS-------\n\n 	   	IMD interference not too bad.\n")
+        
+        if len(group) >= 5:
+          print(" 	This is an excellent IMD rating for 5 or 6 channels.")
+      
+
+      elif bad_match == 0 and bad_close == 0:
+        print("                  -------ANALYSIS-------\n\n 	      Troubling interference possible.\n")
+        
+        if len(group) >= 5:
+          print(" 	     Good IMD rating for 5 and 6 channels.")
+        
+
+      elif bad_match == 0 and bad_close > 0:
+        print("                   -------ANALYSIS-------\n\n 		     IMD problems likely!\n 	   IMD within 10MHz of at least one channel.")
+
+      
+      elif bad_match > 0:
+        print(" 			 -------ANALYSIS-------\n\n 	  Bad channel grouping! Debilitating interference!")
+      
+
+      print("\n")
+      print("                 ", end='')
+      for chan in printable:
+        print (chan.upper(), end='   ')
+      
+
+      print("\n")
+      print("           ", end='')
+      for chan in converted:
+        print (chan, end='   ')
+
+      print("\n\n\n")
+
+    return warnings, printable, converted
 
 
 
@@ -288,8 +275,9 @@ class FreqSet:
     
     converter = {}
     converted = []
+    file_path = os.path.join(module_dir, 'vtx_channel_guide.txt')
 
-    with open('libr/vtx_channel_guide.txt', 'r') as f:
+    with open(file_path, 'r') as f:
       for line in f:
 
         sliced_raw = line.split(', ')
@@ -317,8 +305,9 @@ class FreqSet:
     
     converter = {}
     converted = []
+    file_path = os.path.join(module_dir, 'vtx_channel_guide_abrv.txt')
 
-    with open('libr/vtx_channel_guide_abrv.txt', 'r') as f:
+    with open(file_path, 'r') as f:
       for line in f:
 
         sliced_raw = line.split(', ')
@@ -357,50 +346,77 @@ class FreqSet:
     score_alt = None
     score_alt_weighted = None
     IMD_score = None
+
     
-
+    # for broadcast factor
     sorted_group = sorted(group, reverse=True)
-
     for i in range(len(sorted_group) - 1):
+
+      # calculate VTX channel separation
       seperation = sorted_group[i] - sorted_group[i+1]
       
+      # keep track of closest VTX channel separation
       if closest_broadcast == None:
         closest_broadcast = seperation
-
       else:
         if seperation < closest_broadcast:
           closest_broadcast = seperation
 
+      # keep track of total times VTX channels separation less than 40
       if seperation < 40:
         broadcast_close_times += 1
 
  
 
+    # for IMD score
+    unique_prob_imd = []
+    score_total_uniq = 0
+    divide_by_uniq = 0
 
+   # for each IMD freq
     for sublst in bad_freq:
       for x in sublst:
+        # then for each channel
         worst = None
         for chan in group:
+          # if seperation less than 35MHz
           diff3 = abs(x - chan)
           if diff3 < 35:
+
+            # count every time IMD is close to a channel
             IMD_close_to_chan += 1
+
+            # keep track of least separation of current IMD to channel 
             if worst == None:
               worst = diff3
             else:
               if diff3 < worst:
                 worst = diff3
         
+        # if IMD was closer than 35 MHz to a channel
         if worst != None:
-          if closest_imd == None:
-            closest_imd = worst
-          else:
-            if worst < closest_imd:
-              closest_imd = worst
 
+          # for unique IMD freqs score
+          if (x not in unique_prob_imd):
+            # for each problem IMD, use least separation of that IMD to a channel to compute a reducing score
+            # and keep running sum of squared reducing scores and of number of scores to divde by later
+            to_add = (35 - worst) ** 2
+            score_total_uniq += to_add
+            divide_by_uniq += 1
+            unique_prob_imd.append(x)
+
+            # keep track of overall worst offender - closest IMD to channel
+            if closest_imd == None:
+              closest_imd = worst
+            else:
+              if worst < closest_imd:
+                closest_imd = worst
+
+          # for each problem IMD, use least separation of that IMD to a channel to compute a reducing score
+          # and keep running sum of squared reducing scores and of number of scores to divde by later
           to_add = (35 - worst) ** 2
           score_total += to_add
-          divide_by += 1 
-
+          divide_by += 1
            
 
     #ratio = (IMD_close_to_chan / len(group))
@@ -412,8 +428,14 @@ class FreqSet:
       print(" Minimum Problem IMD\n frequency seperation\n to VTX channel: =============> " + str(closest_imd) + " MHz\n")
 
     if divide_by != 0:
-      IMD_score =  100 - (((float(score_total) /divide_by) ** .5) * 2.857142857)             
-      IMD_score *= (1 - (IMD_close_to_chan / 30))  # to reduce proportional to close IMD channels
+      IMD_score =  100 - (((float(score_total) /divide_by) ** .5) * 2.857142857)  
+      IMD_score_uniq =  100 - (((float(score_total_uniq) /divide_by_uniq) ** .5) * 2.857142857)
+      # use the lower of these two scores
+      if IMD_score_uniq < IMD_score:
+        IMD_score = IMD_score_uniq
+        divide_by = divide_by_uniq
+
+      IMD_score *= (1 - (IMD_close_to_chan / 30))  # to reduce proportional to times IMD was close to channels in total
 
     if closest_imd == 0:
       score_alt = 0
@@ -514,6 +536,8 @@ class FreqSet:
       print("\n Top Possible Score is 100\n\n\n\n")
     
     self.scores = [score_alt, score_alt_weighted, closest_broadcast, IMD_score]
+
+    return score_alt, score_alt_weighted, closest_broadcast, IMD_score, divide_by, IMD_close_to_chan, closest_imd
 
 
 
@@ -865,7 +889,28 @@ def flatten(tup):
 
 
 
+def check_channel_input(chan_input):
+    
+    bands = ['a', 'b', 'c', 'e', 'f', 'r', 'l']
+    channels = [str(x) for x in range(1,9)]
 
+    try:
+        
+      if (chan_input[0] in bands and chan_input[1] in channels)\
+      and len(chan_input) == 2:         
+        return True
+
+      if (int(chan_input) <= 5945 and int(chan_input) >= 5325):        
+        return True
+         
+      else:
+        print("\n----- Try Again. -----\n")
+        return False
+
+
+    except (ValueError, IndexError):
+      print("\n----- Try Again. -----\n")
+      return False
 
    
 

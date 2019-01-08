@@ -4,6 +4,12 @@ import pandas as pd
 import seaborn as sns
 
 
+studies = [
+'studies/list3.txt', 'studies/list3usa.txt', 'studies/list3low.txt',
+'studies/list4.txt',  'studies/list4usa.txt', 'studies/list4low.txt',
+'studies/list5.txt', 'studies/list5usa.txt', 'studies/list5low.txt',
+'studies/list6.txt', 'studies/list6usa.txt', 'studies/list6low.txt'
+]
 
 
 def plot_list_scores(group_list):
@@ -16,40 +22,12 @@ def plot_list_scores(group_list):
 	for line in all_lines[3:]:
 		score_list.append(get_score(line, 0))
 
-	plt.hist(score_list, bins=50, color='slateblue', histtype='step')
+	plt.hist(score_list, bins=50, color='slateblue')
 	tit_str = group_list[8:-4]
 	plt.title("{} Scores Distribution".format(tit_str))
 	plt.xlabel('Scores')
 	plt.ylabel('Occurrences')
 	#plt.show()
-
-
-
-#this is crap for this particular dataset
-def plot_list_scores_sea(group_list): 
-
-	score_list = []
-
-	with open(group_list) as f:
-		all_lines = f.readlines()
-
-	for line in all_lines[3:]:
-		score_list.append(get_score(line, 0))
-
-	df = pd.DataFrame({'scores': score_list})
-
-	sns.set_style('whitegrid')
-	sns.set_context('notebook')
-
-	sns.kdeplot(df.scores, shade=True)
-
-	tit_str = group_list[8:-4]
-	plt.title("{} Scores Distribution".format(tit_str))
-	plt.xlabel('Scores')
-	plt.ylabel('Occurrences')
-	plt.show()
-
-
 
 
 
@@ -72,6 +50,7 @@ def plot_list_freqs(group_list):
 	plt.xlabel('Frequency')
 	plt.ylabel('Occurrences')
 	#plt.show()
+
 
 
 def plot_channel_freq(group_list, num_channels):
@@ -223,7 +202,7 @@ def plot_band_frequency(group_list, num_bands, ax_obj):
 		idx = band_to_idx[band]
 		band_count_list[idx] += 1
 
-	plt.bar(range(num_bands), band_count_list) 
+	plt.bar(range(num_bands), band_count_list, color='slateblue') 
 	tit_str = group_list[8:-4]
 	plt.title("{} Band Occurrences".format(tit_str))
 	plt.xlabel('Band')
@@ -275,44 +254,13 @@ def plot_scores_groups():
 	plt.close('all')
 	plt.figure(figsize=(10, 11))
 
-	plt.subplot(4, 3, 1)
-	plot_list_scores('studies/list3.txt')
+	for i in range(len(studies)):
 
-	plt.subplot(4, 3, 2)
-	plot_list_scores('studies/list3usa.txt')
-
-	plt.subplot(4, 3, 3)
-	plot_list_scores('studies/list3low.txt')
-
-	plt.subplot(4, 3, 4)
-	plot_list_scores('studies/list4.txt')
-
-	plt.subplot(4, 3, 5)
-	plot_list_scores('studies/list4usa.txt')
-
-	plt.subplot(4, 3, 6)
-	plot_list_scores('studies/list4low.txt')
-
-	plt.subplot(4, 3, 7)
-	plot_list_scores('studies/list5.txt')
-
-	plt.subplot(4, 3, 8)
-	plot_list_scores('studies/list5usa.txt')
-
-	plt.subplot(4, 3, 9)
-	plot_list_scores('studies/list5low.txt')
-
-	plt.subplot(4, 3, 10)
-	plot_list_scores('studies/list6.txt')
-
-	plt.subplot(4, 3, 11)
-	plot_list_scores('studies/list6usa.txt')
-
-	plt.subplot(4, 3, 12)
-	plot_list_scores('studies/list6low.txt')
+		plt.subplot(4, 3, i+1)
+		plot_list_scores(studies[i])
 
 	plt.subplots_adjust(hspace=.75, wspace=.6)
-	#plt.savefig('Plots/scores_figure2.png')
+	plt.savefig('Plots/Scores_Dist_Barchart.png')
 	plt.show()
 
 
@@ -322,44 +270,12 @@ def plot_freq_dist():
 	plt.close('all')
 	plt.figure(figsize=(13, 11))
 
-	plt.subplot(4, 3, 1)
-	plot_list_freqs('studies/list3.txt')
-
-	plt.subplot(4, 3, 2)
-	plot_list_freqs('studies/list3usa.txt')
-
-	plt.subplot(4, 3, 3)
-	plot_list_freqs('studies/list3low.txt')
-
-	plt.subplot(4, 3, 4)
-	plot_list_freqs('studies/list4.txt')
-
-	plt.subplot(4, 3, 5)
-	plot_list_freqs('studies/list4usa.txt')
-
-	plt.subplot(4, 3, 6)
-	plot_list_freqs('studies/list4low.txt')
-
-	plt.subplot(4, 3, 7)
-	plot_list_freqs('studies/list5.txt')
-
-	plt.subplot(4, 3, 8)
-	plot_list_freqs('studies/list5usa.txt')
-
-	plt.subplot(4, 3, 9)
-	plot_list_freqs('studies/list5low.txt')
-
-	plt.subplot(4, 3, 10)
-	plot_list_freqs('studies/list6.txt')
-
-	plt.subplot(4, 3, 11)
-	plot_list_freqs('studies/list6usa.txt')
-
-	plt.subplot(4, 3, 12)
-	plot_list_freqs('studies/list6low.txt')
+	for i in range(len(studies)):
+		plt.subplot(4, 3, i+1)
+		plot_list_freqs(studies[i])
 
 	plt.subplots_adjust(hspace=.75, wspace=.6)
-	#plt.savefig('Plots/freq_dist_fig.png')
+	plt.savefig('Plots/Frequency_dist.png')
 	plt.show()
 
 
@@ -419,8 +335,8 @@ def plot_chan_occur():
 	#plt.subplot(4, 3, 12)
 	plot_channel_freq('studies/list6low.txt', 47)
 
-	#plt.subplots_adjust(hspace=.75, wspace=.6)
-	plt.savefig('Plots/channel_occur/chans_list6low.png')
+	plt.subplots_adjust(hspace=.75, wspace=.6)
+	#plt.savefig('Plots/channel_occur/chans_list6low.png')
 	plt.show()
 
 
@@ -494,45 +410,14 @@ def plot_band_occur():
 
 	plt.close('all')
 	plt.figure(figsize=(13, 11))
+	bands_pattern = [5, 5, 6, 5, 5, 6, 5, 5, 6, 5, 5, 6]
 
-	x = plt.subplot(4, 3, 1)
-	plot_band_frequency('studies/list3.txt', 5, x)
-
-	x = plt.subplot(4, 3, 2)
-	plot_band_frequency('studies/list3usa.txt', 5, x)
-
-	x = plt.subplot(4, 3, 3)
-	plot_band_frequency('studies/list3low.txt', 6, x)
-
-	x = plt.subplot(4, 3, 4)
-	plot_band_frequency('studies/list4.txt', 5, x)
-
-	x = plt.subplot(4, 3, 5)
-	plot_band_frequency('studies/list4usa.txt', 5, x)
-
-	x = plt.subplot(4, 3, 6)
-	plot_band_frequency('studies/list4low.txt', 6, x)
-
-	x = plt.subplot(4, 3, 7)
-	plot_band_frequency('studies/list5.txt', 5, x)
-
-	x = plt.subplot(4, 3, 8)
-	plot_band_frequency('studies/list5usa.txt', 5, x)
-
-	x = plt.subplot(4, 3, 9)
-	plot_band_frequency('studies/list5low.txt', 6, x)
-
-	x = plt.subplot(4, 3, 10)
-	plot_band_frequency('studies/list6.txt', 5, x)
-
-	x = plt.subplot(4, 3, 11)
-	plot_band_frequency('studies/list6usa.txt', 5, x)
-
-	x = plt.subplot(4, 3, 12)
-	plot_band_frequency('studies/list6low.txt', 6, x)
+	for i in range(len(studies)):
+		x = plt.subplot(4, 3, i+1)
+		plot_band_frequency(studies[i], bands_pattern[i], x)
 
 	plt.subplots_adjust(hspace=.75, wspace=.6)
-	#plt.savefig('Plots/band_occur.png')
+	plt.savefig('Plots/Band_Dist_Barchart.png')
 	plt.show()
 
 
@@ -542,45 +427,14 @@ def plots_band_occur_pie():
 
 	plt.close('all')
 	plt.figure(figsize=(13, 11))
+	bands_pattern = [5, 5, 6, 5, 5, 6, 5, 5, 6, 5, 5, 6]
 
-	x = plt.subplot(4, 3, 1)
-	plot_band_frequency_pie('studies/list3.txt', 5, x)
-
-	x = plt.subplot(4, 3, 2)
-	plot_band_frequency_pie('studies/list3usa.txt', 5, x)
-
-	x = plt.subplot(4, 3, 3)
-	plot_band_frequency_pie('studies/list3low.txt', 6, x)
-
-	x = plt.subplot(4, 3, 4)
-	plot_band_frequency_pie('studies/list4.txt', 5, x)
-
-	x = plt.subplot(4, 3, 5)
-	plot_band_frequency_pie('studies/list4usa.txt', 5, x)
-
-	x = plt.subplot(4, 3, 6)
-	plot_band_frequency_pie('studies/list4low.txt', 6, x)
-
-	x = plt.subplot(4, 3, 7)
-	plot_band_frequency_pie('studies/list5.txt', 5, x)
-
-	x = plt.subplot(4, 3, 8)
-	plot_band_frequency_pie('studies/list5usa.txt', 5, x)
-
-	x = plt.subplot(4, 3, 9)
-	plot_band_frequency_pie('studies/list5low.txt', 6, x)
-
-	x = plt.subplot(4, 3, 10)
-	plot_band_frequency_pie('studies/list6.txt', 5, x)
-
-	x = plt.subplot(4, 3, 11)
-	plot_band_frequency_pie('studies/list6usa.txt', 5, x)
-
-	x = plt.subplot(4, 3, 12)
-	plot_band_frequency_pie('studies/list6low.txt', 6, x)
+	for i in range(len(studies)):
+		x = plt.subplot(4, 3, i+1)
+		plot_band_frequency_pie(studies[i], bands_pattern[i], x)
 
 	#plt.subplots_adjust(hspace=.75, wspace=.6)
-	#plt.savefig('Plots/band_occur_pie.png')
+	plt.savefig('Plots/Band_Dist_Piechart.png')
 	plt.show()
 
 
