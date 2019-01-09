@@ -6,11 +6,11 @@
 
 	VTX Guru scores FPV VTX channel groups based on the IMD (Inter Modulation Distortion)
 	profile of the channel group. Additionally, VTX Guru may progressively reduce
-	the output score based upon the VTX channel separation within the group. The resultant 
-	score is an attempt to allow comparison of the scores alone to be more meaningful.
-	The "Video Clarity Score" term is used to indicate that score may not have been strictly 
-	IMD derived; it may have been influenced by the VTX channels separations.
-
+	the output score based upon the VTX channel separation within the group. Video Clarity 
+	Score (VCS) term is used to indicate that score may not have been strictly IMD derived; 
+	it may have been influenced by the VTX channels separations. This is an attempt to 
+	allow comparison of score alone to be more meaningful.
+	
 
 
 	IMD SCORE
@@ -27,12 +27,12 @@
 	performing groups can be observed.
 
 	To begin calculating a score, we look at each resultant IMD frequency for a 5GHz VTX freq 
-	group. This is done with the standard IMD formula -  F3 = (F1 x 2) - F2.  If the problem 
+	group. This is done with the standard IMD formula -  F3 = (F1 x 2) - F2.  If an  
 	IMD freq is an exact match to a VTX channel, a fail condition is met and the score goes 
 	to zero. Otherwise, if a IMD freq is within 35MHz of a VTX channel, it is considered a 
 	"problem IMD frequency". A problem IMD freq. can be within 35MHz of more than one VTX 
 	channel. For each problem IMD frequency - the least separation (sep.) to a VTX channel 
-	(in MHz) is noted; and how many times the separation was less than 35 MHz is noted 
+	(in MHz) is noted, and how many times the separation was less than 35 MHz to a channel
 	(IMD_close_to_chan).
 
 	The least separation to a VTX channel is subtracted from 35 resulting in a "reducing score"
@@ -44,24 +44,32 @@
 	reducing factor =  1 - (IMD_close_to_chan / 30)
 
 
-	Also calculated is the root mean square (RMS) of the reducing scores. The worst possible 
+	Then calculated is the root mean square (RMS) of the reducing scores. The worst possible 
 	result would be a RMS of 35, what all exact IMD matches to VTX channels would produce. 
 	The RMS of reducing scores is then scaled by a factor such that this worst result (35) 
-	becomes 100  -   35 X (scale factor) =  100;  thus a zero score is produced in this worst 
+	becomes 100  --   35 X (scale factor) =  100;  thus a zero score is produced in this worst 
 	case as IMD Score is calculated as such:
 	
 	 
 	IMD Score =  (100 - scaled RMS of reducing scores) X reducing factor
 
 
+	Also calculated is an alternate IMD score derived from the RMS of reducing scores of unique 
+	problem IMD frequencies. If this alternate IMD score is lower than the first it is used in 
+	it's place. In instances when the same IMD frequency is found more than once in the IMD 
+	frequency matrix this prevents the score from being improved by the duplicate IMD frequency. 	
+
+
 
 	BROADCAST FACTOR
 	----------------
 	
-	Video Clarity Score = IMD Score X Broadcast Factor
+
 
 	The IMD score is next multiplied by a broadcast factor, if one has been created, to 
 	penalize the score proportional to the VTX channels separations. 
+
+	Video Clarity Score = IMD Score X Broadcast Factor
 
 	A broadcast factor will be created if any VTX channels are closer than 40 MHz apart.
 	If any VTX channels are less than 28 MHz apart a fail condition is met and the score goes 
@@ -134,7 +142,7 @@
 	events.
 
 	The algorithm is currently tuned to give relevant results with 2 to 6 pilots flying at 
-	once. To be able to better judge larger numbers of pilots flying at once the broacast factor
+	once. To be able to better judge larger numbers of pilots flying at once the broadcast factor
 	would need to be adjusted.
 
 

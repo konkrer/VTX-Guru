@@ -4,13 +4,20 @@
 
 
 VTX Guru is a suite of tools for for FPV pilots, concerning having clear video when multiple pilots fly at once. 
-VTX Guru can help pilots easily find a good channel group for multiple pilots; as well as analyze particular 
-channel groups, or investigate all possible combinations of a set of channels. Scores are derived from a unique 
-algorithm. 
+VTX Guru can help pilots easily find a good VTX channel group for multiple pilots; as well as analyze particular 
+VTX channel groups, or investigate all possible combinations of a set of VTX channels. Scores are derived from a 
+unique algorithm. 
 
 
 
 VTX_Guru.py   -  Is the main application where all the individual tools can be accessed.
+
+
+
+
+Investigate.py - Used to score all possible combinations of a set of VTX channels. Groups having a passing score 
+                 are saved to file. Currently, investigation sets can be comprised from bands A, B, E, F, R , and
+                 lowband. The exact subset of these bands to investigate is user definable.
 
 
 
