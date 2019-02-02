@@ -554,7 +554,7 @@ class FreqSet:
       with open(output_file, "a") as f:
         f.write("%.2f  %.2f  %s  %s   " % (self.scores[0], self.scores[3], self.scores[1], self.scores[2]))
         for chan in abbreviations:
-          f.write(str(chan) +" ")
+          f.write(str(chan).lower() +" ")
         f.write('-- ')
         for freq in converted:
           f.write(str(freq) + " ",)
@@ -568,7 +568,7 @@ class FreqSet:
       with open(self.output, "a") as f:
         f.write("%.2f  %.2f  %s  %s   " % (self.scores[0], self.scores[3], self.scores[1], self.scores[2]))
         for chan in self.group:
-          f.write(str(chan) + " ",)
+          f.write(str(chan).lower() + " ",)
         f.write('-- ')
         for freq in converted:
           f.write(str(freq) + " ",)
@@ -583,7 +583,7 @@ class FreqSet:
       with open(self.output, "a") as f:
         f.write("%.2f,%.2f,%s,%s," % (self.scores[0], self.scores[3], self.scores[1], self.scores[2]))
         for chan in self.group:
-          f.write(str(chan) + " ",)
+          f.write(str(chan).lower() + " ",)
         f.write(',')
         for freq in converted:
           f.write(str(freq) + " ",)
@@ -757,9 +757,9 @@ class FreqSet:
     else:
        with open(self.output, "a") as f:
           f.write(
-"""IMD = IMD score | WSCORE = weighted score  |  SEP = minimum VTX channel seperation
+"""IMD = IMD score | WVCS = weighted Video Clarity Score  |  SEP = minimum VTX channel seperation
 
-SCORE | IMD | WSCORE| SEP|   CHANNELS    |        FREQUENCIES        |    Sorted Frequencies\n""")
+VCS   | IMD | WVCS | SEP|   CHANNELS    |        FREQUENCIES        |    Sorted Frequencies\n""")
 
     gen = combo_explor(channels, int(num_channels))
 
@@ -792,7 +792,7 @@ SCORE | IMD | WSCORE| SEP|   CHANNELS    |        FREQUENCIES        |    Sorted
         
         if add_lowband:
           if self.scores[1] != None:
-            if self.scores[1] >= 80:
+            if self.scores[1] >= 83.3:
               self.export(converted, csv)
         else:
           if self.scores[1] != None:

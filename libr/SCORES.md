@@ -66,7 +66,7 @@
 	
 
 
-	The IMD score is next multiplied by a broadcast factor, if one has been created, to 
+	The IMD score is next multiplied by a "broadcast factor", if one has been created, to 
 	penalize the score proportional to the VTX channels separations. 
 
 	Video Clarity Score = IMD Score X Broadcast Factor
@@ -101,7 +101,7 @@
 	Additionally, 5 and 6 channel groups (comprised from 40 channel set) cannot score perfect 
 	100 scores. So to make things easier the weighted scoring for 5 and 6 channel groups was 
 	created. With weighted scoring 	the "best in class" 40 channel group gets a weighted score 
-	of 100. The seeming least good of previously recommended 40 channel groups (IMD5 & IMD6) 
+	of 100. The seeming least good of previously recommended channel groups (IMD5 & IMD6) 
 	both get a score of 62.3 weighted. The Video Clarity Score is scaled appropriately to 
 	achieve this result.
 
@@ -112,11 +112,12 @@
 	With 3 and 4 channel groups, and with 5 channel groups with lowband, the same above 
 	60 score = Pass method is used, however the unweighted Video Clarity Score is used. In this
 	case, to judge from sixty and above is more arbitrary; it's done for consistency of the above 
-	60 pass logic and ensures sufficient entries for Smart Search to search.
+	60 pass logic and ensures sufficient entries for Smart Search to search. Always use groups 
+	nearing the fail point (60) with caution.
 
-	With 6 channel groups with lowband - weighted scores of 80 and above populate the pass
+	With 6 channel groups with lowband - weighted scores of 83.3 and above populate the pass
 	list. This is done to match the 5 channel with lowband list, who's lowest passing group
-	has a weighted score of 80. This way when recommending lowband groups, the groups recommended
+	has a weighted score of 83.3. This way when recommending lowband groups, the groups recommended
 	will be either better than or very good when compared to non-lowband 5 & 6 groups.
 
 
@@ -143,6 +144,6 @@
 
 	The algorithm is currently tuned to give relevant results with 2 to 6 pilots flying at 
 	once. To be able to better judge larger numbers of pilots flying at once the broadcast factor
-	would need to be adjusted.
+	and the reducing factor would need to be adjusted.
 
 
