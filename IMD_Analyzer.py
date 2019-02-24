@@ -6,16 +6,14 @@ Run this script for IMD analysis of VTX channel group.
 
 """
 
-
+x = FreqSet()
 
 while True:
 
-  x = FreqSet()
   x.get_input()
   converted = x.convert_freq_abbreviations()
   x.analyze_interference(converted)
-  x.score(converted)
-  
+  x.score(converted) 
 
   loop = input("\n-- Enter Q to Quit IMD Analyzer\n-- Enter X to export\n-- Press Enter to continue: \n\n").lower().strip(' ')
   if loop =='q':
