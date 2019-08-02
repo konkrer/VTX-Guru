@@ -13,7 +13,7 @@
 
 	It is these third-order distortion products that are the IMD. They manifest 
 	frequency content on nearby frequencies, sometimes called "spectral regrowth".
-    This is believed to be the main cause of problems when multiple pilots fly at once.
+	This is believed to be the main cause of problems when multiple pilots fly at once.
 
 	IMD score, and therefore video clarity score, is lowered by VTX Guru as IMD 
 	frequencies get closer to the broadcast VTX channels and by the increasing times 
